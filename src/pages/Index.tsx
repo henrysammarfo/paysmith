@@ -16,11 +16,11 @@ const VIDEO_URL =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260406_094145_4a271a6c-3869-4f1c-8aa7-aeb0cb227994.mp4";
 
 const NAV_LINKS = [
-  "Movies",
-  "TV Series",
-  "Editor's Pick",
-  "Interviews",
-  "User Reviews",
+  "Product",
+  "Developers",
+  "Pricing",
+  "Docs",
+  "Blog",
 ];
 
 const Index = () => {
@@ -57,7 +57,7 @@ const Index = () => {
             className="animate-blur-fade-up text-xl md:text-2xl font-semibold tracking-widest"
             style={{ animationDelay: "0ms" }}
           >
-            CINEMATIC
+            PAYSMITH
           </div>
 
           {/* Desktop Nav Links */}
@@ -167,15 +167,15 @@ const Index = () => {
                     size={16}
                     className="fill-foreground sm:w-5 sm:h-5"
                   />
-                  8.7/10 IMDB
+                  YC W26
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Clock size={16} className="sm:w-5 sm:h-5" />
-                  132 min
+                  3-Line Integration
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Calendar size={16} className="sm:w-5 sm:h-5" />
-                  April, 2025
+                  Stellar WA Residency
                 </span>
               </div>
 
@@ -184,7 +184,7 @@ const Index = () => {
                 className="animate-blur-fade-up text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-[-0.04em] mb-4 md:mb-6"
                 style={{ animationDelay: "400ms" }}
               >
-                Step Through. Work Smarter.
+                The Stripe for AI Agents in Africa
               </h1>
 
               {/* Description */}
@@ -192,8 +192,7 @@ const Index = () => {
                 className="animate-blur-fade-up text-base sm:text-lg md:text-xl text-muted-foreground mb-6 md:mb-12 max-w-2xl"
                 style={{ animationDelay: "500ms" }}
               >
-                A voyage through forgotten realms, where past and future
-                intertwine.
+                Give your AI agent a mobile money wallet in 3 lines of code. MTN MoMo, Vodafone Cash, bank transfers, and USDC — one API.
               </p>
 
               {/* CTA */}
@@ -203,13 +202,13 @@ const Index = () => {
                   style={{ animationDelay: "600ms" }}
                 >
                   <Play size={18} className="fill-primary-foreground" />
-                  Watch Now
+                  Get Started
                 </button>
                 <button
                   className="animate-blur-fade-up flex items-center gap-2 rounded-full font-medium liquid-glass px-6 sm:px-8 py-2.5 sm:py-3"
                   style={{ animationDelay: "700ms" }}
                 >
-                  Learn More
+                  View Docs
                 </button>
               </div>
             </div>
