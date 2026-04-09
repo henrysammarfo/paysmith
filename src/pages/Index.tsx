@@ -200,21 +200,6 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Right - Nav Arrows */}
-            <div className="flex gap-3">
-              <button
-                className="animate-blur-fade-up rounded-full liquid-glass px-4 sm:px-6 py-2.5 sm:py-3"
-                style={{ animationDelay: "800ms" }}
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <button
-                className="animate-blur-fade-up rounded-full liquid-glass px-4 sm:px-6 py-2.5 sm:py-3"
-                style={{ animationDelay: "900ms" }}
-              >
-                <ChevronRight size={18} />
-              </button>
-            </div>
           </div>
         </div>
       </div>
