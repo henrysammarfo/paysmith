@@ -64,7 +64,7 @@ const CodeIntegrationSection = () => {
   };
 
   return (
-    <section className="relative z-10 bg-background px-4 sm:px-6 md:px-12 py-16 md:py-24">
+    <section className="relative z-10 px-4 sm:px-6 md:px-12 py-16 md:py-24">
       {/* Section Header */}
       <div className="max-w-6xl mx-auto">
         <p className="text-sm text-muted-foreground uppercase tracking-widest mb-3">

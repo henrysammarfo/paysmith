@@ -29,9 +29,7 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen w-screen overflow-x-hidden bg-background">
-      {/* Hero Section */}
-      <div className="relative h-screen w-full overflow-hidden">
-      {/* Background Video */}
+      {/* Background Video (shared across all sections) */}
       <video
         autoPlay
         loop
@@ -50,6 +48,9 @@ const Index = () => {
           maskImage: "linear-gradient(to top, black 0%, transparent 45%)",
         }}
       />
+
+      {/* Hero Section */}
+      <div className="relative h-screen w-full overflow-hidden">
 
       {/* Main Content */}
       <div className="relative z-10 flex h-full flex-col">
