@@ -23,7 +23,7 @@ const MOATS = [
 
 const MoatSection = () => {
   return (
-    <section className="relative z-10 px-4 sm:px-6 md:px-12 py-16 md:py-24">
+    <section id="moat" className="relative z-10 px-4 sm:px-6 md:px-12 py-16 md:py-24">
       <div className="max-w-6xl mx-auto">
         <p className="text-sm text-muted-foreground uppercase tracking-widest mb-3">
           Why We Win
