@@ -91,6 +91,7 @@ const BlogPost = () => {
 
         <div className="prose-custom">{renderContent(post.content)}</div>
       </article>
+      <Footer />
     </div>
   );
 };

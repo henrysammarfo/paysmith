@@ -350,6 +350,7 @@ try {
           </section>
         </main>
       </div>
+      <Footer />
     </div>
   );
 };

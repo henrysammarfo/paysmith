@@ -232,6 +232,7 @@ const Blog = () => (
       {/* Newsletter Signup */}
       <NewsletterSignup />
     </div>
+    <Footer />
   </div>
 );
 

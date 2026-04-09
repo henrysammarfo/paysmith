@@ -235,6 +235,7 @@ const Index = () => {
       <MoatSection />
       <SectionDivider />
       <CtaSection />
+      <Footer />
     </div>
   );
 };
