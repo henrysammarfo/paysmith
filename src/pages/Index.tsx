@@ -85,19 +85,6 @@ const Index = () => {
 
           {/* Right Buttons */}
           <div className="flex items-center gap-3">
-            <button
-              className="animate-blur-fade-up hidden sm:flex items-center gap-2 rounded-full liquid-glass px-4 md:px-6 py-2 text-sm"
-              style={{ animationDelay: "350ms" }}
-            >
-              <Search size={18} />
-              Search
-            </button>
-            <button
-              className="animate-blur-fade-up hidden sm:flex items-center justify-center w-10 h-10 rounded-full liquid-glass"
-              style={{ animationDelay: "400ms" }}
-            >
-              <User size={18} />
-            </button>
             {/* Hamburger */}
             <button
               className="animate-blur-fade-up flex lg:hidden items-center justify-center w-10 h-10 rounded-full liquid-glass"
