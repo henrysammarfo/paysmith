@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, Clock, ArrowRight } from "lucide-react";
+import { ArrowLeft, Clock, ArrowRight, Mail } from "lucide-react";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export const blogPosts = [
   {
@@ -223,8 +228,57 @@ const Blog = () => (
           </Link>
         ))}
       </div>
+
+      {/* Newsletter Signup */}
+      <NewsletterSignup />
     </div>
   </div>
 );
+
+function NewsletterSignup() {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setLoading(true);
+    const { error } = await supabase.from("newsletter_subscribers").insert({ email: email.trim() });
+    setLoading(false);
+    if (error) {
+      if (error.code === "23505") {
+        toast.info("You're already subscribed!");
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+    } else {
+      toast.success("You're subscribed! We'll keep you posted.");
+      setEmail("");
+    }
+  };
+
+  return (
+    <div className="mt-16 rounded-2xl border border-border bg-card p-8 text-center">
+      <Mail className="mx-auto mb-4 text-primary" size={28} />
+      <h2 className="text-2xl font-semibold mb-2">Stay in the loop</h2>
+      <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+        Get the latest on AI payments, product updates, and engineering deep dives. No spam.
+      </p>
+      <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+        <Input
+          type="email"
+          required
+          placeholder="you@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="flex-1"
+        />
+        <Button type="submit" disabled={loading} className="rounded-xl">
+          {loading ? "Subscribing…" : "Subscribe"}
+        </Button>
+      </form>
+    </div>
+  );
+}
 
 export default Blog;
