@@ -131,18 +131,27 @@ const Index = () => {
         >
           <div className="bg-[hsl(0,0%,7%)]/95 backdrop-blur-lg border-t border-b border-[hsl(0,0%,20%)] shadow-2xl">
             <div className="flex flex-col px-4 py-2">
-              {NAV_LINKS.map((link, i) => (
-                <a
-                  key={link}
-                  href="#"
-                  className="py-3 px-3 rounded-lg text-foreground/80 hover:bg-[hsl(0,0%,15%)]/50 transition-all duration-300"
-                  style={{
-                    transitionDelay: menuOpen ? `${i * 50}ms` : "0ms",
-                  }}
-                >
-                  {link}
-                </a>
-              ))}
+              {NAV_LINKS.map((link, i) =>
+                link.isPage ? (
+                  <Link
+                    key={link.label}
+                    to={link.href}
+                    className="py-3 px-3 rounded-lg text-foreground/80 hover:bg-[hsl(0,0%,15%)]/50 transition-all duration-300"
+                    style={{ transitionDelay: menuOpen ? `${i * 50}ms` : "0ms" }}
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    className="py-3 px-3 rounded-lg text-foreground/80 hover:bg-[hsl(0,0%,15%)]/50 transition-all duration-300"
+                    style={{ transitionDelay: menuOpen ? `${i * 50}ms` : "0ms" }}
+                  >
+                    {link.label}
+                  </a>
+                )
+              )}
             </div>
           </div>
         </div>
