@@ -14,6 +14,110 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_wallets: {
+        Row: {
+          api_key: string | null
+          balance_ghs: number | null
+          balance_ngn: number | null
+          balance_usdc: number | null
+          chimoney_sub_account_id: string | null
+          country: string
+          created_at: string
+          currency: string
+          id: string
+          name: string
+          owner_id: string
+          payment_methods: string[] | null
+          spending_policy: Json | null
+          status: string
+          total_txns: number | null
+          total_volume: number | null
+        }
+        Insert: {
+          api_key?: string | null
+          balance_ghs?: number | null
+          balance_ngn?: number | null
+          balance_usdc?: number | null
+          chimoney_sub_account_id?: string | null
+          country: string
+          created_at?: string
+          currency: string
+          id: string
+          name: string
+          owner_id: string
+          payment_methods?: string[] | null
+          spending_policy?: Json | null
+          status?: string
+          total_txns?: number | null
+          total_volume?: number | null
+        }
+        Update: {
+          api_key?: string | null
+          balance_ghs?: number | null
+          balance_ngn?: number | null
+          balance_usdc?: number | null
+          chimoney_sub_account_id?: string | null
+          country?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          name?: string
+          owner_id?: string
+          payment_methods?: string[] | null
+          spending_policy?: Json | null
+          status?: string
+          total_txns?: number | null
+          total_volume?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_wallets_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "developers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      developers: {
+        Row: {
+          auth_id: string
+          company: string | null
+          created_at: string
+          email: string
+          id: string
+          live_api_key: string | null
+          plan: string
+          test_api_key: string | null
+          webhook_secret: string | null
+          webhook_url: string | null
+        }
+        Insert: {
+          auth_id: string
+          company?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          live_api_key?: string | null
+          plan?: string
+          test_api_key?: string | null
+          webhook_secret?: string | null
+          webhook_url?: string | null
+        }
+        Update: {
+          auth_id?: string
+          company?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          live_api_key?: string | null
+          plan?: string
+          test_api_key?: string | null
+          webhook_secret?: string | null
+          webhook_url?: string | null
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           email: string
@@ -62,6 +166,62 @@ export type Database = {
         }
         Relationships: []
       }
+      transactions: {
+        Row: {
+          agent_wallet_id: string
+          amount: number
+          created_at: string
+          currency: string
+          fee: number | null
+          fx_rate: number | null
+          id: string
+          method: string
+          note: string | null
+          rail_tx_id: string | null
+          recipient: string | null
+          status: string
+          type: string
+        }
+        Insert: {
+          agent_wallet_id: string
+          amount: number
+          created_at?: string
+          currency: string
+          fee?: number | null
+          fx_rate?: number | null
+          id?: string
+          method: string
+          note?: string | null
+          rail_tx_id?: string | null
+          recipient?: string | null
+          status?: string
+          type: string
+        }
+        Update: {
+          agent_wallet_id?: string
+          amount?: number
+          created_at?: string
+          currency?: string
+          fee?: number | null
+          fx_rate?: number | null
+          id?: string
+          method?: string
+          note?: string | null
+          rail_tx_id?: string | null
+          recipient?: string | null
+          status?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_agent_wallet_id_fkey"
+            columns: ["agent_wallet_id"]
+            isOneToOne: false
+            referencedRelation: "agent_wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -79,6 +239,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      webhook_logs: {
+        Row: {
+          created_at: string
+          delivered_at: string | null
+          developer_id: string | null
+          event_type: string
+          id: string
+          payload: Json | null
+          response_status: number | null
+        }
+        Insert: {
+          created_at?: string
+          delivered_at?: string | null
+          developer_id?: string | null
+          event_type: string
+          id?: string
+          payload?: Json | null
+          response_status?: number | null
+        }
+        Update: {
+          created_at?: string
+          delivered_at?: string | null
+          developer_id?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          response_status?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_logs_developer_id_fkey"
+            columns: ["developer_id"]
+            isOneToOne: false
+            referencedRelation: "developers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
