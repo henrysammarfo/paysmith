@@ -234,6 +234,10 @@ const Index = () => {
           </div>
         </div>
       </div>
+      </div>
+
+      {/* Code Integration Section */}
+      <CodeIntegrationSection />
     </div>
   );
 };
