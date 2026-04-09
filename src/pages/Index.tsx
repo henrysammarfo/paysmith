@@ -5,6 +5,7 @@ import ProblemSection from "@/components/ProblemSection";
 import FeaturesSection from "@/components/FeaturesSection";
 import MoatSection from "@/components/MoatSection";
 import CtaSection from "@/components/CtaSection";
+import {
   Search,
   User,
   Menu,
