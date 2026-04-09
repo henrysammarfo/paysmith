@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { ArrowLeft, Book, Code, Zap, Shield, Terminal, ChevronRight, Copy, Check } from "lucide-react";
+import Footer from "@/components/Footer";
 import { useState, useEffect, useRef } from "react";
 
 const sidebarSections = [

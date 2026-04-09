@@ -6,6 +6,7 @@ import ProblemSection from "@/components/ProblemSection";
 import FeaturesSection from "@/components/FeaturesSection";
 import MoatSection from "@/components/MoatSection";
 import CtaSection from "@/components/CtaSection";
+import Footer from "@/components/Footer";
 import {
   Menu,
   X,
