@@ -28,7 +28,9 @@ const Index = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-background">
+    <div className="relative min-h-screen w-screen overflow-x-hidden bg-background">
+      {/* Hero Section */}
+      <div className="relative h-screen w-full overflow-hidden">
       {/* Background Video */}
       <video
         autoPlay
