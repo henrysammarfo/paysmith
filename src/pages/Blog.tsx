@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, Clock, ArrowRight } from "lucide-react";
+import { ArrowLeft, Clock, ArrowRight, Mail } from "lucide-react";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export const blogPosts = [
   {
