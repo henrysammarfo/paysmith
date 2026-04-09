@@ -6,16 +6,12 @@ import FeaturesSection from "@/components/FeaturesSection";
 import MoatSection from "@/components/MoatSection";
 import CtaSection from "@/components/CtaSection";
 import {
-  Search,
-  User,
   Menu,
   X,
   Star,
   Clock,
   Calendar,
   Play,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 
 const VIDEO_URL =
