@@ -1,6 +1,7 @@
 import { Link, useParams, Navigate } from "react-router-dom";
 import { ArrowLeft, Clock, Calendar } from "lucide-react";
 import { blogPosts } from "./Blog";
+import Footer from "@/components/Footer";
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -91,6 +92,7 @@ const BlogPost = () => {
 
         <div className="prose-custom">{renderContent(post.content)}</div>
       </article>
+      <Footer />
     </div>
   );
 };
