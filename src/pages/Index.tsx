@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CodeIntegrationSection from "@/components/CodeIntegrationSection";
 import {
   Search,
   User,
