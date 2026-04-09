@@ -68,16 +68,27 @@ const Index = () => {
 
           {/* Desktop Nav Links */}
           <div className="hidden lg:flex items-center gap-8">
-            {NAV_LINKS.map((link, i) => (
-              <a
-                key={link}
-                href="#"
-                className="animate-blur-fade-up text-sm text-foreground/80 hover:text-foreground/60 transition-colors"
-                style={{ animationDelay: `${100 + i * 50}ms` }}
-              >
-                {link}
-              </a>
-            ))}
+            {NAV_LINKS.map((link, i) =>
+              link.isPage ? (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className="animate-blur-fade-up text-sm text-foreground/80 hover:text-foreground/60 transition-colors"
+                  style={{ animationDelay: `${100 + i * 50}ms` }}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="animate-blur-fade-up text-sm text-foreground/80 hover:text-foreground/60 transition-colors"
+                  style={{ animationDelay: `${100 + i * 50}ms` }}
+                >
+                  {link.label}
+                </a>
+              )
+            )}
           </div>
 
           {/* Right Buttons */}
