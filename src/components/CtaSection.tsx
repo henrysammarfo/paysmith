@@ -37,10 +37,6 @@ const CtaSection = () => {
           </button>
         </div>
 
-        {/* Footer note */}
-        <p className="mt-16 text-xs text-muted-foreground/50">
-          © 2026 Paysmith. B2B Infrastructure · Mobile Money · Stablecoins
-        </p>
       </div>
     </section>
   );

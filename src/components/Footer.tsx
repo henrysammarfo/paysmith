@@ -34,7 +34,7 @@ const socials = [
 ];
 
 const Footer = () => (
-  <footer className="border-t border-border bg-background">
+  <footer className="relative z-20 border-t border-border bg-background">
     <div className="max-w-6xl mx-auto px-4 py-12 sm:py-16">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-12">
         {/* Brand */}
