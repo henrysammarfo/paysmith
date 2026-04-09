@@ -201,19 +201,21 @@ const Index = () => {
 
               {/* CTA */}
               <div className="flex flex-wrap gap-3 sm:gap-4">
-                <button
+                <Link
+                  to="/signup"
                   className="animate-blur-fade-up flex items-center gap-2 bg-primary text-primary-foreground rounded-full font-medium px-6 sm:px-8 py-2.5 sm:py-3 hover:bg-primary/80 transition-colors"
                   style={{ animationDelay: "600ms" }}
                 >
                   <Play size={18} className="fill-primary-foreground" />
                   Get Started
-                </button>
-                <button
+                </Link>
+                <Link
+                  to="/docs"
                   className="animate-blur-fade-up flex items-center gap-2 rounded-full font-medium liquid-glass px-6 sm:px-8 py-2.5 sm:py-3"
                   style={{ animationDelay: "700ms" }}
                 >
                   View Docs
-                </button>
+                </Link>
               </div>
             </div>
 
