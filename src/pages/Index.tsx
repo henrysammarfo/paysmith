@@ -57,7 +57,7 @@ const Index = () => {
             className="animate-blur-fade-up text-xl md:text-2xl font-semibold tracking-widest"
             style={{ animationDelay: "0ms" }}
           >
-            CINEMATIC
+            PAYSMITH
           </div>
 
           {/* Desktop Nav Links */}
