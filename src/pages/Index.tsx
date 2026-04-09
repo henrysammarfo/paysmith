@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import CodeIntegrationSection from "@/components/CodeIntegrationSection";
 import SectionDivider from "@/components/SectionDivider";
 import ProblemSection from "@/components/ProblemSection";
@@ -18,11 +19,11 @@ const VIDEO_URL =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260406_094145_4a271a6c-3869-4f1c-8aa7-aeb0cb227994.mp4";
 
 const NAV_LINKS = [
-  "Product",
-  "Developers",
-  "Pricing",
-  "Docs",
-  "Blog",
+  { label: "Product", href: "#features" },
+  { label: "Developers", href: "#code" },
+  { label: "Pricing", href: "/pricing", isPage: true },
+  { label: "Docs", href: "/docs", isPage: true },
+  { label: "Blog", href: "#moat" },
 ];
 
 const Index = () => {
@@ -67,16 +68,27 @@ const Index = () => {
 
           {/* Desktop Nav Links */}
           <div className="hidden lg:flex items-center gap-8">
-            {NAV_LINKS.map((link, i) => (
-              <a
-                key={link}
-                href="#"
-                className="animate-blur-fade-up text-sm text-foreground/80 hover:text-foreground/60 transition-colors"
-                style={{ animationDelay: `${100 + i * 50}ms` }}
-              >
-                {link}
-              </a>
-            ))}
+            {NAV_LINKS.map((link, i) =>
+              link.isPage ? (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className="animate-blur-fade-up text-sm text-foreground/80 hover:text-foreground/60 transition-colors"
+                  style={{ animationDelay: `${100 + i * 50}ms` }}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="animate-blur-fade-up text-sm text-foreground/80 hover:text-foreground/60 transition-colors"
+                  style={{ animationDelay: `${100 + i * 50}ms` }}
+                >
+                  {link.label}
+                </a>
+              )
+            )}
           </div>
 
           {/* Right Buttons */}
@@ -119,18 +131,27 @@ const Index = () => {
         >
           <div className="bg-[hsl(0,0%,7%)]/95 backdrop-blur-lg border-t border-b border-[hsl(0,0%,20%)] shadow-2xl">
             <div className="flex flex-col px-4 py-2">
-              {NAV_LINKS.map((link, i) => (
-                <a
-                  key={link}
-                  href="#"
-                  className="py-3 px-3 rounded-lg text-foreground/80 hover:bg-[hsl(0,0%,15%)]/50 transition-all duration-300"
-                  style={{
-                    transitionDelay: menuOpen ? `${i * 50}ms` : "0ms",
-                  }}
-                >
-                  {link}
-                </a>
-              ))}
+              {NAV_LINKS.map((link, i) =>
+                link.isPage ? (
+                  <Link
+                    key={link.label}
+                    to={link.href}
+                    className="py-3 px-3 rounded-lg text-foreground/80 hover:bg-[hsl(0,0%,15%)]/50 transition-all duration-300"
+                    style={{ transitionDelay: menuOpen ? `${i * 50}ms` : "0ms" }}
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    className="py-3 px-3 rounded-lg text-foreground/80 hover:bg-[hsl(0,0%,15%)]/50 transition-all duration-300"
+                    style={{ transitionDelay: menuOpen ? `${i * 50}ms` : "0ms" }}
+                  >
+                    {link.label}
+                  </a>
+                )
+              )}
             </div>
           </div>
         </div>
@@ -180,19 +201,21 @@ const Index = () => {
 
               {/* CTA */}
               <div className="flex flex-wrap gap-3 sm:gap-4">
-                <button
+                <Link
+                  to="/signup"
                   className="animate-blur-fade-up flex items-center gap-2 bg-primary text-primary-foreground rounded-full font-medium px-6 sm:px-8 py-2.5 sm:py-3 hover:bg-primary/80 transition-colors"
                   style={{ animationDelay: "600ms" }}
                 >
                   <Play size={18} className="fill-primary-foreground" />
                   Get Started
-                </button>
-                <button
+                </Link>
+                <Link
+                  to="/docs"
                   className="animate-blur-fade-up flex items-center gap-2 rounded-full font-medium liquid-glass px-6 sm:px-8 py-2.5 sm:py-3"
                   style={{ animationDelay: "700ms" }}
                 >
                   View Docs
-                </button>
+                </Link>
               </div>
             </div>
 
