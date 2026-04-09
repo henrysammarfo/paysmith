@@ -28,9 +28,9 @@ const footerLinks = [
 ];
 
 const socials = [
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Github, href: "#", label: "GitHub" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
+  { icon: Twitter, href: "https://x.com/henrysammarfo", label: "Twitter" },
+  { icon: Github, href: "https://github.com/henrysammarfo", label: "GitHub" },
+  { icon: Linkedin, href: "https://linkedin.com/in/henrysammarfo", label: "LinkedIn" },
 ];
 
 const Footer = () => (
