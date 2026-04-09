@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import CodeIntegrationSection from "@/components/CodeIntegrationSection";
 import SectionDivider from "@/components/SectionDivider";
 import ProblemSection from "@/components/ProblemSection";
@@ -18,11 +19,11 @@ const VIDEO_URL =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260406_094145_4a271a6c-3869-4f1c-8aa7-aeb0cb227994.mp4";
 
 const NAV_LINKS = [
-  "Product",
-  "Developers",
-  "Pricing",
-  "Docs",
-  "Blog",
+  { label: "Product", href: "#features" },
+  { label: "Developers", href: "#code" },
+  { label: "Pricing", href: "/pricing", isPage: true },
+  { label: "Docs", href: "/docs", isPage: true },
+  { label: "Blog", href: "#moat" },
 ];
 
 const Index = () => {
