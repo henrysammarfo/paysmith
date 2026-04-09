@@ -14,6 +14,8 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Pricing from "./pages/Pricing";
 import Docs from "./pages/Docs";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import Overview from "./pages/dashboard/Overview";
 import Wallets from "./pages/dashboard/Wallets";
 import ApiKeys from "./pages/dashboard/ApiKeys";
@@ -36,6 +38,8 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/docs" element={<Docs />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
             <Route
               path="/dashboard"
               element={

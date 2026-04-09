@@ -23,7 +23,7 @@ const NAV_LINKS = [
   { label: "Developers", href: "#code" },
   { label: "Pricing", href: "/pricing", isPage: true },
   { label: "Docs", href: "/docs", isPage: true },
-  { label: "Blog", href: "#moat" },
+  { label: "Blog", href: "/blog", isPage: true },
 ];
 
 const Index = () => {
