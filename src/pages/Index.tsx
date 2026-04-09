@@ -1,6 +1,10 @@
 import { useState } from "react";
 import CodeIntegrationSection from "@/components/CodeIntegrationSection";
-import {
+import SectionDivider from "@/components/SectionDivider";
+import ProblemSection from "@/components/ProblemSection";
+import FeaturesSection from "@/components/FeaturesSection";
+import MoatSection from "@/components/MoatSection";
+import CtaSection from "@/components/CtaSection";
   Search,
   User,
   Menu,
@@ -238,7 +242,16 @@ const Index = () => {
       </div>
 
       {/* Code Integration Section */}
+      <SectionDivider />
       <CodeIntegrationSection />
+      <SectionDivider />
+      <ProblemSection />
+      <SectionDivider />
+      <FeaturesSection />
+      <SectionDivider />
+      <MoatSection />
+      <SectionDivider />
+      <CtaSection />
     </div>
   );
 };
