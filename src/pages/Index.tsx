@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CodeIntegrationSection from "@/components/CodeIntegrationSection";
 import {
   Search,
   User,
@@ -27,7 +28,9 @@ const Index = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-background">
+    <div className="relative min-h-screen w-screen overflow-x-hidden bg-background">
+      {/* Hero Section */}
+      <div className="relative h-screen w-full overflow-hidden">
       {/* Background Video */}
       <video
         autoPlay
@@ -231,6 +234,10 @@ const Index = () => {
           </div>
         </div>
       </div>
+      </div>
+
+      {/* Code Integration Section */}
+      <CodeIntegrationSection />
     </div>
   );
 };
