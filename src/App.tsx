@@ -14,6 +14,8 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Pricing from "./pages/Pricing";
 import Docs from "./pages/Docs";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import Overview from "./pages/dashboard/Overview";
 import Wallets from "./pages/dashboard/Wallets";
 import ApiKeys from "./pages/dashboard/ApiKeys";
