@@ -154,9 +154,9 @@ const Overview = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Overview</h1>
+        <h1 className="text-xl sm:text-2xl font-semibold">Overview</h1>
         <span className="flex items-center gap-1.5 text-xs text-emerald-400">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           Live
@@ -166,21 +166,21 @@ const Overview = () => {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-xl border border-border bg-card p-5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm text-muted-foreground">{s.label}</span>
-              <s.icon size={18} className="text-muted-foreground" />
+          <div key={s.label} className="rounded-xl border border-border bg-card p-4 sm:p-5">
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <span className="text-xs sm:text-sm text-muted-foreground">{s.label}</span>
+              <s.icon size={16} className="text-muted-foreground" />
             </div>
-            <div className="text-2xl font-semibold">{s.value}</div>
+            <div className="text-xl sm:text-2xl font-semibold">{s.value}</div>
             {s.change && <span className="text-xs text-muted-foreground">{s.change}</span>}
           </div>
         ))}
       </div>
 
       {/* Volume Chart */}
-      <div className="rounded-xl border border-border bg-card p-5">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
         <h2 className="text-sm text-muted-foreground mb-4">Transaction Volume</h2>
-        <div className="h-64">
+        <div className="h-48 sm:h-64">
           {dailyStats.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={dailyStats}>
@@ -204,9 +204,9 @@ const Overview = () => {
       </div>
 
       {/* Revenue Chart */}
-      <div className="rounded-xl border border-border bg-card p-5">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
         <h2 className="text-sm text-muted-foreground mb-4">Revenue (Fees Earned)</h2>
-        <div className="h-56">
+        <div className="h-44 sm:h-56">
           {dailyStats.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={dailyStats}>
@@ -224,20 +224,20 @@ const Overview = () => {
       </div>
 
       {/* Recent Transactions */}
-      <div className="rounded-xl border border-border bg-card p-5">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
         <h2 className="text-sm text-muted-foreground mb-4">Recent Transactions</h2>
         <div className="space-y-3">
           {recentTxs.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-6">No transactions yet</p>
           ) : (
             recentTxs.map((tx, i) => (
-              <div key={i} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${tx.type === "receive" ? "bg-emerald-500/10" : "bg-red-500/10"}`}>
+              <div key={i} className="flex items-center justify-between py-2 border-b border-border last:border-0 gap-2">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 ${tx.type === "receive" ? "bg-emerald-500/10" : "bg-red-500/10"}`}>
                     {tx.type === "receive" ? <ArrowDownLeft size={14} className="text-emerald-400" /> : <ArrowUpRight size={14} className="text-red-400" />}
                   </div>
-                  <div>
-                    <p className="text-sm font-medium">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">
                       {tx.recipient || tx.method?.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase())}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -245,7 +245,7 @@ const Overview = () => {
                     </p>
                   </div>
                 </div>
-                <span className={`text-sm font-medium ${tx.type === "receive" ? "text-emerald-400" : "text-red-400"}`}>
+                <span className={`text-sm font-medium shrink-0 ${tx.type === "receive" ? "text-emerald-400" : "text-red-400"}`}>
                   {tx.type === "receive" ? "+" : "-"}{currencySymbol(tx.currency)}{Number(tx.amount).toLocaleString()}
                 </span>
               </div>
