@@ -622,6 +622,31 @@ const ApiPlayground = () => {
           </div>
         )}
       </div>
+
+      {/* Production confirmation dialog */}
+      <AlertDialog open={showProdConfirm} onOpenChange={setShowProdConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle size={18} className="text-destructive" />
+              Switch to Production?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Production mode uses your <strong>live API key</strong> and sends real requests that may process actual payments. Only switch if you intend to test against production rails.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Stay in Sandbox</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => setEnv("production")}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Switch to Production
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <Footer />
     </div>
   );
