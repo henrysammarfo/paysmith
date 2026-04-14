@@ -26,76 +26,77 @@ const ApiUsageStats = () => {
   const [rateLimitWarning, setRateLimitWarning] = useState(false);
   const [recentCallsPerMinute, setRecentCallsPerMinute] = useState(0);
   const [dismissedWarning, setDismissedWarning] = useState(false);
+  const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
 
-  useEffect(() => {
+  const load = useCallback(async () => {
     if (!user) return;
 
-    const load = async () => {
-      const { data: dev } = await supabase
-        .from("developers")
-        .select("id")
-        .eq("auth_id", user.id)
-        .single();
+    const { data: dev } = await supabase
+      .from("developers")
+      .select("id")
+      .eq("auth_id", user.id)
+      .single();
 
-      if (!dev) { setLoading(false); return; }
+    if (!dev) { setLoading(false); return; }
 
-      const { data: logs } = await supabase
-        .from("api_call_logs")
-        .select("endpoint, created_at")
-        .eq("developer_id", dev.id)
-        .order("created_at", { ascending: false })
-        .limit(1000);
+    const { data: logs } = await supabase
+      .from("api_call_logs")
+      .select("endpoint, created_at")
+      .eq("developer_id", dev.id)
+      .order("created_at", { ascending: false })
+      .limit(1000);
 
-      if (!logs || logs.length === 0) { setLoading(false); return; }
+    if (!logs || logs.length === 0) { setLoading(false); return; }
 
-      setTotalCalls(logs.length);
+    setTotalCalls(logs.length);
 
-      const today = new Date().toISOString().slice(0, 10);
-      setTodayCalls(logs.filter(l => l.created_at.slice(0, 10) === today).length);
+    const today = new Date().toISOString().slice(0, 10);
+    setTodayCalls(logs.filter(l => l.created_at.slice(0, 10) === today).length);
 
-      // Check for rate limit warnings (SYSTEM logs from last hour)
-      const hasWarning = logs.some(l => l.endpoint.includes("rate-limit-warning"));
-      
-      // Calculate calls in the last minute for real-time usage indicator
-      const oneMinAgo = new Date(Date.now() - 60_000).toISOString();
-      const recentCalls = logs.filter(l => l.created_at >= oneMinAgo && !l.endpoint.includes("rate-limit-warning")).length;
-      setRecentCallsPerMinute(recentCalls);
-      setRateLimitWarning(hasWarning || recentCalls >= RATE_LIMIT * 0.8);
+    const hasWarning = logs.some(l => l.endpoint.includes("rate-limit-warning"));
+    const oneMinAgo = new Date(Date.now() - 60_000).toISOString();
+    const recentCalls = logs.filter(l => l.created_at >= oneMinAgo && !l.endpoint.includes("rate-limit-warning")).length;
+    setRecentCallsPerMinute(recentCalls);
+    setRateLimitWarning(hasWarning || recentCalls >= RATE_LIMIT * 0.8);
 
-      // Daily aggregation
-      const byDay: Record<string, number> = {};
-      for (const l of logs) {
-        const day = l.created_at.slice(0, 10);
-        byDay[day] = (byDay[day] || 0) + 1;
-      }
-      setDailyCalls(
-        Object.entries(byDay)
-          .sort(([a], [b]) => a.localeCompare(b))
-          .slice(-14)
-          .map(([date, count]) => ({
-            date: new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-            count,
-          }))
-      );
+    const byDay: Record<string, number> = {};
+    for (const l of logs) {
+      const day = l.created_at.slice(0, 10);
+      byDay[day] = (byDay[day] || 0) + 1;
+    }
+    setDailyCalls(
+      Object.entries(byDay)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .slice(-14)
+        .map(([date, count]) => ({
+          date: new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          count,
+        }))
+    );
 
-      // Top endpoints (exclude system logs)
-      const byEndpoint: Record<string, number> = {};
-      for (const l of logs) {
-        if (l.endpoint.includes("rate-limit-warning")) continue;
-        byEndpoint[l.endpoint] = (byEndpoint[l.endpoint] || 0) + 1;
-      }
-      setTopEndpoints(
-        Object.entries(byEndpoint)
-          .sort(([, a], [, b]) => b - a)
-          .slice(0, 5)
-          .map(([endpoint, count]) => ({ endpoint, count }))
-      );
+    const byEndpoint: Record<string, number> = {};
+    for (const l of logs) {
+      if (l.endpoint.includes("rate-limit-warning")) continue;
+      byEndpoint[l.endpoint] = (byEndpoint[l.endpoint] || 0) + 1;
+    }
+    setTopEndpoints(
+      Object.entries(byEndpoint)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 5)
+        .map(([endpoint, count]) => ({ endpoint, count }))
+    );
 
-      setLoading(false);
-    };
-
-    load();
+    setLastRefreshed(new Date());
+    setLoading(false);
   }, [user]);
+
+  useEffect(() => { load(); }, [load]);
+
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(load, 30_000);
+    return () => clearInterval(interval);
+  }, [load]);
 
   if (loading || totalCalls === 0) return null;
 
