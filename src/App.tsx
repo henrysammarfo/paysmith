@@ -24,6 +24,7 @@ import ApiKeys from "./pages/dashboard/ApiKeys";
 import DashboardSettings from "./pages/dashboard/DashboardSettings";
 import Transactions from "./pages/dashboard/Transactions";
 import WebhookLogs from "./pages/dashboard/WebhookLogs";
+import AdminMetrics from "./pages/dashboard/AdminMetrics";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ const App = () => (
               <Route path="api-keys" element={<ApiKeys />} />
               <Route path="webhook-logs" element={<WebhookLogs />} />
               <Route path="settings" element={<DashboardSettings />} />
+              <Route path="metrics" element={<AdminMetrics />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
