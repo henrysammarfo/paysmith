@@ -15,7 +15,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   BarChart3,
-  Zap,
+  Gauge,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -27,7 +27,7 @@ const BASE_NAV_ITEMS = [
   { label: "Transactions", path: "/dashboard/transactions", icon: ArrowUpDown },
   { label: "API Keys", path: "/dashboard/api-keys", icon: Key },
   { label: "Webhook Logs", path: "/dashboard/webhook-logs", icon: Webhook },
-  { label: "API Usage", path: "/dashboard/api-usage", icon: Zap },
+  { label: "API Usage", path: "/dashboard/api-usage", icon: Gauge },
   { label: "Settings", path: "/dashboard/settings", icon: Settings },
 ];
 
