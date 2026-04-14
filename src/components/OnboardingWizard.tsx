@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Check, Wallet, Key, Webhook, Copy, Eye, EyeOff, ChevronRight, RefreshCw, Sparkles, Code } from "lucide-react";
+import { Check, Wallet, Key, Webhook, Copy, Eye, EyeOff, ChevronRight, RefreshCw, Sparkles, Code, Play, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -21,11 +21,13 @@ const CodeSnippet = ({ code, lang }: { code: string; lang: string }) => (
   </div>
 );
 
-const SnippetTabs = ({ testKey, walletId }: { testKey: string; walletId?: string }) => {
+const SnippetTabs = ({ testKey, walletId, showTryLive }: { testKey: string; walletId?: string; showTryLive?: boolean }) => {
   const [lang, setLang] = useState<SnippetLang>("curl");
+  const [trying, setTrying] = useState(false);
+  const [tryResult, setTryResult] = useState<any>(null);
+  const [tryError, setTryError] = useState<string | null>(null);
   const wId = walletId || "ps_agent_xxxxxx";
   const maskedKey = testKey ? testKey.slice(0, 12) + "..." : "ps_test_xxxxx";
-  const baseUrl = `${window.location.origin.replace("id-preview--", "").replace(".lovable.app", "")}/functions/v1`;
   const apiUrl = import.meta.env.VITE_SUPABASE_URL
     ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`
     : "https://api.paysmith.dev/v1";
@@ -82,6 +84,156 @@ response = requests.post(
 )
 
 print(response.json())`,
+  };
+
+  const handleTryLive = async () => {
+    if (!testKey || !walletId) {
+      toast.error("Create a wallet first to try a live payment");
+      return;
+    }
+    setTrying(true);
+    setTryResult(null);
+    setTryError(null);
+    try {
+      const { data, error } = await supabase.functions.invoke("pay", {
+        headers: { "x-api-key": testKey },
+        body: {
+          walletId: wId,
+          amount: 500,
+          currency: "NGN",
+          method: "mobile_money",
+          to: "+2348012345678",
+          note: "Test payment from onboarding",
+        },
+      });
+      if (error) throw error;
+      setTryResult(data);
+      toast.success("Test payment sent!");
+    } catch (err: any) {
+      setTryError(err.message || "Request failed");
+    } finally {
+      setTrying(false);
+    }
+  };
+
+  const tabs: { id: SnippetLang; label: string }[] = [
+    { id: "curl", label: "cURL" },
+    { id: "node", label: "Node.js" },
+    { id: "python", label: "Python" },
+  ];
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 rounded-lg bg-secondary/30 p-0.5 w-fit">
+          {tabs.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setLang(t.id)}
+              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                lang === t.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+        {showTryLive && (
+          <button
+            onClick={handleTryLive}
+            disabled={trying || !walletId}
+            className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-3 py-1 text-xs font-medium hover:bg-emerald-500/25 transition-colors disabled:opacity-50"
+          >
+            {trying ? <RefreshCw size={12} className="animate-spin" /> : <Play size={12} />}
+            Try it live
+          </button>
+        )}
+      </div>
+      <CodeSnippet code={snippets[lang]} lang={lang} />
+      {tryResult && (
+        <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3 space-y-1">
+          <p className="text-xs font-medium text-emerald-400 flex items-center gap-1"><Check size={12} /> Response</p>
+          <pre className="text-xs text-foreground overflow-x-auto">{JSON.stringify(tryResult, null, 2)}</pre>
+        </div>
+      )}
+      {tryError && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3">
+          <p className="text-xs text-destructive">{tryError}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const WalletCreationSnippets = ({ testKey }: { testKey: string }) => {
+  const [lang, setLang] = useState<SnippetLang>("curl");
+  const maskedKey = testKey ? testKey.slice(0, 12) + "..." : "ps_test_xxxxx";
+  const apiUrl = import.meta.env.VITE_SUPABASE_URL
+    ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`
+    : "https://api.paysmith.dev/v1";
+
+  const snippets: Record<SnippetLang, string> = {
+    curl: `curl -X POST ${apiUrl}/agents-create \\
+  -H "Content-Type: application/json" \\
+  -H "X-API-KEY: ${maskedKey}" \\
+  -d '{
+    "name": "Payment Bot",
+    "country": "NG",
+    "currency": "NGN",
+    "paymentMethods": ["mobile_money", "bank_transfer"],
+    "spendingPolicy": {
+      "dailyLimit": 10000,
+      "maxSingleTx": 2000,
+      "requireApprovalAbove": 5000
+    }
+  }'`,
+    node: `const response = await fetch(
+  "${apiUrl}/agents-create",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-KEY": "${maskedKey}",
+    },
+    body: JSON.stringify({
+      name: "Payment Bot",
+      country: "NG",
+      currency: "NGN",
+      paymentMethods: ["mobile_money", "bank_transfer"],
+      spendingPolicy: {
+        dailyLimit: 10000,
+        maxSingleTx: 2000,
+        requireApprovalAbove: 5000,
+      },
+    }),
+  }
+);
+
+const wallet = await response.json();
+console.log(wallet.walletId, wallet.apiKey);`,
+    python: `import requests
+
+response = requests.post(
+    "${apiUrl}/agents-create",
+    headers={
+        "Content-Type": "application/json",
+        "X-API-KEY": "${maskedKey}",
+    },
+    json={
+        "name": "Payment Bot",
+        "country": "NG",
+        "currency": "NGN",
+        "paymentMethods": ["mobile_money", "bank_transfer"],
+        "spendingPolicy": {
+            "dailyLimit": 10000,
+            "maxSingleTx": 2000,
+            "requireApprovalAbove": 5000,
+        },
+    },
+)
+
+wallet = response.json()
+print(wallet["walletId"], wallet["apiKey"])`,
   };
 
   const tabs: { id: SnippetLang; label: string }[] = [
@@ -417,13 +569,22 @@ const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
                         </div>
                       </div>
 
-                      {/* Interactive code snippets */}
+                      {/* Interactive code snippets - Test Payment */}
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
                           <Code size={14} className="text-primary" />
                           <p className="text-xs font-medium">Make a test payment</p>
                         </div>
-                        <SnippetTabs testKey={testKey} walletId={createdWallet?.walletId || createdWallet?.id} />
+                        <SnippetTabs testKey={testKey} walletId={createdWallet?.walletId || createdWallet?.id} showTryLive />
+                      </div>
+
+                      {/* Wallet creation snippets */}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Plus size={14} className="text-primary" />
+                          <p className="text-xs font-medium">Create wallets via API</p>
+                        </div>
+                        <WalletCreationSnippets testKey={testKey} />
                       </div>
 
                       <button
