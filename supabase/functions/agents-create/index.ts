@@ -5,7 +5,7 @@ const corsHeaders = {
 };
 
 // ── In-memory rate limiter (per isolate) ───────────────────────────
-const RATE_LIMIT = 10;
+const RATE_LIMIT = 20; // requests per minute per key
 const RATE_WINDOW = 60_000;
 const rateBuckets = new Map<string, number[]>();
 
