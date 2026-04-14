@@ -6,6 +6,7 @@ import {
 } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import OnboardingWizard from "@/components/OnboardingWizard";
 
 interface DailyStat {
   date: string;
@@ -17,6 +18,7 @@ interface DailyStat {
 const Overview = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [totalVolume, setTotalVolume] = useState(0);
   const [totalFees, setTotalFees] = useState(0);
   const [activeWallets, setActiveWallets] = useState(0);
@@ -47,7 +49,7 @@ const Overview = () => {
     setTotalVolume(wallets?.reduce((s, w) => s + Number(w.total_volume ?? 0), 0) ?? 0);
     setTotalTxns(wallets?.reduce((s, w) => s + Number(w.total_txns ?? 0), 0) ?? 0);
 
-    if (ids.length === 0) { setLoading(false); return; }
+    if (ids.length === 0) { setShowOnboarding(true); setLoading(false); return; }
 
     const { data: txns } = await supabase
       .from("transactions")
@@ -142,6 +144,12 @@ const Overview = () => {
       <div className="flex items-center justify-center py-20">
         <Loader2 className="animate-spin text-muted-foreground" size={32} />
       </div>
+    );
+  }
+
+  if (showOnboarding) {
+    return (
+      <OnboardingWizard onComplete={() => { setShowOnboarding(false); loadData(); }} />
     );
   }
 
