@@ -1,4 +1,4 @@
-import { Play, Star } from "lucide-react";
+import { Play } from "lucide-react";
 
 const CtaSection = () => {
   return (
@@ -6,10 +6,6 @@ const CtaSection = () => {
       <div className="max-w-3xl mx-auto text-center">
         {/* Badges */}
         <div className="flex items-center justify-center gap-3 mb-8 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 rounded-full liquid-glass px-4 py-1.5 text-xs font-medium">
-            <Star size={14} className="fill-foreground" />
-            YC W26
-          </span>
           <span className="inline-flex items-center rounded-full liquid-glass px-4 py-1.5 text-xs">
             Stellar WA Residency
           </span>
