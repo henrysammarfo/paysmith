@@ -4,6 +4,25 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-api-key",
 };
 
+// ── In-memory rate limiter (per isolate) ───────────────────────────
+const RATE_LIMIT = 30; // requests
+const RATE_WINDOW = 60_000; // 60 seconds
+const rateBuckets = new Map<string, number[]>();
+
+function checkRateLimit(key: string): { allowed: boolean; retryAfter: number } {
+  const now = Date.now();
+  const timestamps = (rateBuckets.get(key) ?? []).filter(t => now - t < RATE_WINDOW);
+  if (timestamps.length >= RATE_LIMIT) {
+    const oldest = timestamps[0];
+    const retryAfter = Math.ceil((oldest + RATE_WINDOW - now) / 1000);
+    rateBuckets.set(key, timestamps);
+    return { allowed: false, retryAfter };
+  }
+  timestamps.push(now);
+  rateBuckets.set(key, timestamps);
+  return { allowed: true, retryAfter: 0 };
+}
+
 // ── Multi-Rail Router ───────────────────────────────────────────────
 // Phase 6: Route payments through Chimoney or Flutterwave based on
 // method + country. Falls back to sandbox stub when keys are missing.
@@ -147,6 +166,15 @@ Deno.serve(async (req) => {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Rate limit check
+    const rl = checkRateLimit(apiKey);
+    if (!rl.allowed) {
+      return new Response(
+        JSON.stringify({ error: `Rate limit exceeded. Try again in ${rl.retryAfter} seconds.`, retryAfter: rl.retryAfter }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": String(rl.retryAfter) } }
+      );
     }
 
     const body = await req.json();
