@@ -128,8 +128,12 @@ const ApiPlayground = () => {
       let functionName = selected as string;
       const invokeOptions: any = { method: config.method as any, ...options };
 
-      if (qp && Object.keys(qp).length > 0) {
-        const search = new URLSearchParams(qp).toString();
+      const queryParamEntries = config.queryParams
+        ?.filter((p) => queryValues[p.name]?.trim())
+        .reduce((acc, p) => ({ ...acc, [p.name]: queryValues[p.name].trim() }), {} as Record<string, string>);
+
+      if (queryParamEntries && Object.keys(queryParamEntries).length > 0) {
+        const search = new URLSearchParams(queryParamEntries).toString();
         functionName = `${selected}?${search}`;
       }
 
