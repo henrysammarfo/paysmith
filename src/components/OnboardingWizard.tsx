@@ -1,9 +1,114 @@
 import { useState, useEffect } from "react";
-import { Check, Wallet, Key, Webhook, Copy, Eye, EyeOff, ChevronRight, RefreshCw, Sparkles } from "lucide-react";
+import { Check, Wallet, Key, Webhook, Copy, Eye, EyeOff, ChevronRight, RefreshCw, Sparkles, Code } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
+
+type SnippetLang = "curl" | "node" | "python";
+
+const CodeSnippet = ({ code, lang }: { code: string; lang: string }) => (
+  <div className="relative group">
+    <pre className="rounded-lg bg-secondary/50 border border-border p-3 text-xs overflow-x-auto">
+      <code className="text-foreground">{code}</code>
+    </pre>
+    <button
+      onClick={() => { navigator.clipboard.writeText(code); toast.success("Code copied!"); }}
+      className="absolute top-2 right-2 p-1 rounded bg-secondary hover:bg-accent opacity-0 group-hover:opacity-100 transition-opacity"
+    >
+      <Copy size={12} className="text-muted-foreground" />
+    </button>
+  </div>
+);
+
+const SnippetTabs = ({ testKey, walletId }: { testKey: string; walletId?: string }) => {
+  const [lang, setLang] = useState<SnippetLang>("curl");
+  const wId = walletId || "ps_agent_xxxxxx";
+  const maskedKey = testKey ? testKey.slice(0, 12) + "..." : "ps_test_xxxxx";
+  const baseUrl = `${window.location.origin.replace("id-preview--", "").replace(".lovable.app", "")}/functions/v1`;
+  const apiUrl = import.meta.env.VITE_SUPABASE_URL
+    ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`
+    : "https://api.paysmith.dev/v1";
+
+  const snippets: Record<SnippetLang, string> = {
+    curl: `curl -X POST ${apiUrl}/pay \\
+  -H "Content-Type: application/json" \\
+  -H "X-API-KEY: ${maskedKey}" \\
+  -d '{
+    "walletId": "${wId}",
+    "amount": 500,
+    "currency": "NGN",
+    "method": "mobile_money",
+    "recipient": "+2348012345678",
+    "note": "Test payment"
+  }'`,
+    node: `const response = await fetch(
+  "${apiUrl}/pay",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-KEY": "${maskedKey}",
+    },
+    body: JSON.stringify({
+      walletId: "${wId}",
+      amount: 500,
+      currency: "NGN",
+      method: "mobile_money",
+      recipient: "+2348012345678",
+      note: "Test payment",
+    }),
+  }
+);
+
+const data = await response.json();
+console.log(data);`,
+    python: `import requests
+
+response = requests.post(
+    "${apiUrl}/pay",
+    headers={
+        "Content-Type": "application/json",
+        "X-API-KEY": "${maskedKey}",
+    },
+    json={
+        "walletId": "${wId}",
+        "amount": 500,
+        "currency": "NGN",
+        "method": "mobile_money",
+        "recipient": "+2348012345678",
+        "note": "Test payment",
+    },
+)
+
+print(response.json())`,
+  };
+
+  const tabs: { id: SnippetLang; label: string }[] = [
+    { id: "curl", label: "cURL" },
+    { id: "node", label: "Node.js" },
+    { id: "python", label: "Python" },
+  ];
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-1 rounded-lg bg-secondary/30 p-0.5 w-fit">
+        {tabs.map(t => (
+          <button
+            key={t.id}
+            onClick={() => setLang(t.id)}
+            className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+              lang === t.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+      <CodeSnippet code={snippets[lang]} lang={lang} />
+    </div>
+  );
+};
 
 interface OnboardingStep {
   id: string;
