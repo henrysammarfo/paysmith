@@ -43,18 +43,29 @@ Deno.serve(async (req) => {
 
     // Authenticate via API key
     const apiKey = req.headers.get("x-api-key");
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: "Missing X-API-KEY header" }), {
+    if (!apiKey || apiKey.length > 100) {
+      return new Response(JSON.stringify({ error: "Missing or invalid X-API-KEY header" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { data: developer } = await supabase
+    let developer = null;
+    const { data: devByLive } = await supabase
       .from("developers")
       .select("id, plan")
-      .or(`live_api_key.eq.${apiKey},test_api_key.eq.${apiKey}`)
-      .single();
+      .eq("live_api_key", apiKey)
+      .maybeSingle();
+    if (devByLive) {
+      developer = devByLive;
+    } else {
+      const { data: devByTest } = await supabase
+        .from("developers")
+        .select("id, plan")
+        .eq("test_api_key", apiKey)
+        .maybeSingle();
+      developer = devByTest;
+    }
 
     if (!developer) {
       return new Response(JSON.stringify({ error: "Invalid API key" }), {
@@ -80,6 +91,60 @@ Deno.serve(async (req) => {
         JSON.stringify({ error: "name, country, currency are required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // Validate input formats
+    if (typeof name !== "string" || name.length < 1 || name.length > 100) {
+      return new Response(
+        JSON.stringify({ error: "name must be 1-100 characters" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (typeof country !== "string" || !/^[A-Z]{2}$/.test(country)) {
+      return new Response(
+        JSON.stringify({ error: "country must be a 2-letter ISO code (e.g. NG)" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (typeof currency !== "string" || !/^[A-Z]{3}$/.test(currency)) {
+      return new Response(
+        JSON.stringify({ error: "currency must be a 3-letter ISO code (e.g. NGN)" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate paymentMethods if provided
+    const VALID_METHODS = ["mobile_money", "bank_transfer", "crypto", "card"];
+    if (paymentMethods !== undefined) {
+      if (!Array.isArray(paymentMethods) || paymentMethods.some((m: any) => !VALID_METHODS.includes(m))) {
+        return new Response(
+          JSON.stringify({ error: `paymentMethods must be an array of: ${VALID_METHODS.join(", ")}` }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // Validate spendingPolicy if provided
+    if (spendingPolicy !== undefined) {
+      if (typeof spendingPolicy !== "object" || spendingPolicy === null || Array.isArray(spendingPolicy)) {
+        return new Response(
+          JSON.stringify({ error: "spendingPolicy must be an object" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const { dailyLimit, maxSingleTx, requireApprovalAbove } = spendingPolicy;
+      if (
+        (dailyLimit !== undefined && (typeof dailyLimit !== "number" || dailyLimit <= 0)) ||
+        (maxSingleTx !== undefined && (typeof maxSingleTx !== "number" || maxSingleTx <= 0)) ||
+        (requireApprovalAbove !== undefined && (typeof requireApprovalAbove !== "number" || requireApprovalAbove <= 0))
+      ) {
+        return new Response(
+          JSON.stringify({ error: "spendingPolicy values must be positive numbers" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
 
     // Generate wallet ID and API key

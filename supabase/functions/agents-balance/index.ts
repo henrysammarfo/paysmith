@@ -42,18 +42,29 @@ Deno.serve(async (req) => {
     );
 
     const apiKey = req.headers.get("x-api-key");
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: "Missing X-API-KEY header" }), {
+    if (!apiKey || apiKey.length > 100) {
+      return new Response(JSON.stringify({ error: "Missing or invalid X-API-KEY header" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { data: developer } = await supabase
+    let developer = null;
+    const { data: devByLive } = await supabase
       .from("developers")
       .select("id")
-      .or(`live_api_key.eq.${apiKey},test_api_key.eq.${apiKey}`)
-      .single();
+      .eq("live_api_key", apiKey)
+      .maybeSingle();
+    if (devByLive) {
+      developer = devByLive;
+    } else {
+      const { data: devByTest } = await supabase
+        .from("developers")
+        .select("id")
+        .eq("test_api_key", apiKey)
+        .maybeSingle();
+      developer = devByTest;
+    }
 
     if (!developer) {
       return new Response(JSON.stringify({ error: "Invalid API key" }), {
