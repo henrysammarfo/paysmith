@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, Play, Loader2, Copy, Check } from "lucide-react";
+import { ArrowLeft, Play, Loader2, Copy, Check, History, RotateCcw, Trash2 } from "lucide-react";
 import Footer from "@/components/Footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,6 +17,20 @@ interface EndpointConfig {
   defaultBody: string;
   queryParams?: { name: string; placeholder: string }[];
 }
+
+interface HistoryEntry {
+  id: string;
+  endpoint: EndpointKey;
+  label: string;
+  body: string;
+  queryValues: Record<string, string>;
+  status: number | null;
+  response: string;
+  timestamp: number;
+}
+
+const HISTORY_KEY = "ps_playground_history";
+const MAX_HISTORY = 20;
 
 const endpoints: Record<EndpointKey, EndpointConfig> = {
   "agents-create": {
@@ -79,6 +93,18 @@ function ResponseBlock({ data, status }: { data: string; status: number | null }
   );
 }
 
+function loadHistory(): HistoryEntry[] {
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function saveHistory(entries: HistoryEntry[]) {
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(entries.slice(0, MAX_HISTORY)));
+}
+
 const ApiPlayground = () => {
   const [selected, setSelected] = useState<EndpointKey>("pay");
   const [apiKey, setApiKey] = useState("");
@@ -87,6 +113,12 @@ const ApiPlayground = () => {
   const [response, setResponse] = useState<string | null>(null);
   const [status, setStatus] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+
+  useEffect(() => {
+    setHistory(loadHistory());
+  }, []);
 
   const config = endpoints[selected];
 
@@ -97,6 +129,31 @@ const ApiPlayground = () => {
     setQueryValues({});
     setResponse(null);
     setStatus(null);
+  };
+
+  const addToHistory = (entry: Omit<HistoryEntry, "id" | "timestamp">) => {
+    const newEntry: HistoryEntry = {
+      ...entry,
+      id: crypto.randomUUID(),
+      timestamp: Date.now(),
+    };
+    const updated = [newEntry, ...history].slice(0, MAX_HISTORY);
+    setHistory(updated);
+    saveHistory(updated);
+  };
+
+  const replayEntry = (entry: HistoryEntry) => {
+    setSelected(entry.endpoint);
+    setBody(entry.body);
+    setQueryValues(entry.queryValues);
+    setResponse(null);
+    setStatus(null);
+    setShowHistory(false);
+  };
+
+  const clearHistory = () => {
+    setHistory([]);
+    localStorage.removeItem(HISTORY_KEY);
   };
 
   const handleSend = async () => {
@@ -124,7 +181,6 @@ const ApiPlayground = () => {
         }
       }
 
-      // Build the function name and query params separately
       let functionName = selected as string;
       const invokeOptions: any = { method: config.method as any, ...options };
 
@@ -139,19 +195,48 @@ const ApiPlayground = () => {
 
       const { data, error } = await supabase.functions.invoke(functionName, invokeOptions);
 
+      let resStatus: number;
+      let resBody: string;
+
       if (error) {
-        setStatus(error.message?.includes("429") ? 429 : 400);
-        setResponse(JSON.stringify({ error: error.message }, null, 2));
+        resStatus = error.message?.includes("429") ? 429 : 400;
+        resBody = JSON.stringify({ error: error.message }, null, 2);
       } else {
-        setStatus(200);
-        setResponse(JSON.stringify(data, null, 2));
+        resStatus = 200;
+        resBody = JSON.stringify(data, null, 2);
       }
+
+      setStatus(resStatus);
+      setResponse(resBody);
+
+      addToHistory({
+        endpoint: selected,
+        label: config.label,
+        body,
+        queryValues,
+        status: resStatus,
+        response: resBody,
+      });
     } catch (err: any) {
+      const resBody = JSON.stringify({ error: err.message || "Request failed" }, null, 2);
       setStatus(500);
-      setResponse(JSON.stringify({ error: err.message || "Request failed" }, null, 2));
+      setResponse(resBody);
+      addToHistory({
+        endpoint: selected,
+        label: config.label,
+        body,
+        queryValues,
+        status: 500,
+        response: resBody,
+      });
     } finally {
       setLoading(false);
     }
+  };
+
+  const formatTime = (ts: number) => {
+    const d = new Date(ts);
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " · " + d.toLocaleDateString();
   };
 
   return (
@@ -161,10 +246,68 @@ const ApiPlayground = () => {
           <ArrowLeft size={16} /> Back to Docs
         </Link>
 
-        <h1 className="text-4xl font-semibold tracking-tight mb-2">API Playground</h1>
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-4xl font-semibold tracking-tight">API Playground</h1>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowHistory((v) => !v)}
+            className="gap-2"
+          >
+            <History size={14} />
+            History{history.length > 0 && ` (${history.length})`}
+          </Button>
+        </div>
         <p className="text-muted-foreground mb-8">
           Test Paysmith API endpoints with your test API key. All requests hit the sandbox.
         </p>
+
+        {/* History panel */}
+        {showHistory && (
+          <div className="mb-8 rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+              <h3 className="text-sm font-medium flex items-center gap-2">
+                <History size={14} /> Request History
+              </h3>
+              {history.length > 0 && (
+                <button onClick={clearHistory} className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1 transition-colors">
+                  <Trash2 size={12} /> Clear all
+                </button>
+              )}
+            </div>
+            {history.length === 0 ? (
+              <p className="px-4 py-6 text-sm text-muted-foreground text-center">No requests yet. Send a request to see it here.</p>
+            ) : (
+              <div className="divide-y divide-border max-h-80 overflow-y-auto">
+                {history.map((entry) => (
+                  <div key={entry.id} className="flex items-center justify-between px-4 py-3 hover:bg-secondary/30 transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${
+                          entry.status && entry.status < 400
+                            ? "bg-primary/20 text-primary"
+                            : "bg-destructive/20 text-destructive"
+                        }`}>
+                          {entry.status}
+                        </span>
+                        <span className="text-sm font-mono truncate">{entry.label}</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">{formatTime(entry.timestamp)}</span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => replayEntry(entry)}
+                      className="gap-1.5 shrink-0 ml-2"
+                    >
+                      <RotateCcw size={12} /> Replay
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* API Key */}
         <div className="mb-6">

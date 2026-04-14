@@ -24,6 +24,7 @@ const NAV_LINKS = [
   { label: "Developers", href: "#code" },
   { label: "Pricing", href: "/pricing", isPage: true },
   { label: "Docs", href: "/docs", isPage: true },
+  { label: "Playground", href: "/playground", isPage: true },
   { label: "Blog", href: "/blog", isPage: true },
 ];
 
