@@ -26,6 +26,7 @@ import DashboardSettings from "./pages/dashboard/DashboardSettings";
 import Transactions from "./pages/dashboard/Transactions";
 import WebhookLogs from "./pages/dashboard/WebhookLogs";
 import AdminMetrics from "./pages/dashboard/AdminMetrics";
+import ApiUsage from "./pages/dashboard/ApiUsage";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,7 @@ const App = () => (
               <Route path="transactions" element={<Transactions />} />
               <Route path="api-keys" element={<ApiKeys />} />
               <Route path="webhook-logs" element={<WebhookLogs />} />
+              <Route path="api-usage" element={<ApiUsage />} />
               <Route path="settings" element={<DashboardSettings />} />
               <Route path="metrics" element={<AdminRoute><AdminMetrics /></AdminRoute>} />
             </Route>
