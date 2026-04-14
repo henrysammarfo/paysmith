@@ -3,6 +3,7 @@ import { Check, Wallet, Key, Webhook, Copy, Eye, EyeOff, ChevronRight, RefreshCw
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { analytics, EVENTS } from "@/lib/posthog";
 import { Progress } from "@/components/ui/progress";
 
 type SnippetLang = "curl" | "node" | "python";
@@ -398,6 +399,7 @@ const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
       if (error) throw error;
       setCreatedWallet(data);
       toast.success("Wallet created!");
+      analytics.track(EVENTS.WALLET_CREATED, { source: "onboarding", country: walletCountry });
       markStepComplete(0);
     } catch (err: any) {
       toast.error(err.message || "Failed to create wallet");
@@ -430,6 +432,7 @@ const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
       if (error) throw error;
       setWebhookSecret(secret);
       toast.success("Webhook configured!");
+      analytics.track(EVENTS.WEBHOOK_CONFIGURED, { source: "onboarding" });
       markStepComplete(2);
     } catch (err: any) {
       toast.error(err.message || "Failed to save webhook");
@@ -588,7 +591,7 @@ const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
                       </div>
 
                       <button
-                        onClick={() => markStepComplete(1)}
+                        onClick={() => { analytics.track(EVENTS.API_KEY_CREATED, { source: "onboarding" }); markStepComplete(1); }}
                         className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
                       >
                         <Check size={14} /> I've Copied My Keys
