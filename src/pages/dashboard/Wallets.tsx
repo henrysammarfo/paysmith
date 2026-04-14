@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Wallet, Plus, Copy, ExternalLink, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import CreateWalletModal from "@/components/CreateWalletModal";
 
 interface AgentWallet {
   id: string;
@@ -24,11 +25,13 @@ const Wallets = () => {
   const { user } = useAuth();
   const [wallets, setWallets] = useState<AgentWallet[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
 
-  useEffect(() => {
+  const fetchWallets = useCallback(async () => {
     if (!user) return;
+    setLoading(true);
 
-    const fetchWallets = async () => {
+    const fetchInner = async () => {
       // First get the developer record for this user
       const { data: dev } = await supabase
         .from("developers")
@@ -53,8 +56,12 @@ const Wallets = () => {
       setLoading(false);
     };
 
-    fetchWallets();
+    fetchInner();
   }, [user]);
+
+  useEffect(() => {
+    fetchWallets();
+  }, [fetchWallets]);
 
   const formatBalance = (w: AgentWallet) => {
     if (w.currency === "GHS") return `₵${Number(w.balance_ghs).toLocaleString()}`;
@@ -72,7 +79,10 @@ const Wallets = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Wallets</h1>
-        <button className="flex items-center gap-2 bg-primary text-primary-foreground rounded-xl px-4 py-2 text-sm font-medium hover:bg-primary/80 transition-colors">
+        <button
+          onClick={() => setShowCreate(true)}
+          className="flex items-center gap-2 bg-primary text-primary-foreground rounded-xl px-4 py-2 text-sm font-medium hover:bg-primary/80 transition-colors"
+        >
           <Plus size={16} /> New Wallet
         </button>
       </div>
@@ -144,6 +154,12 @@ const Wallets = () => {
           ))}
         </div>
       )}
+
+      <CreateWalletModal
+        open={showCreate}
+        onOpenChange={setShowCreate}
+        onCreated={fetchWallets}
+      />
     </div>
   );
 };
