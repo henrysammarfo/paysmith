@@ -168,6 +168,15 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Rate limit check
+    const rl = checkRateLimit(apiKey);
+    if (!rl.allowed) {
+      return new Response(
+        JSON.stringify({ error: `Rate limit exceeded. Try again in ${rl.retryAfter} seconds.`, retryAfter: rl.retryAfter }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": String(rl.retryAfter) } }
+      );
+    }
+
     const body = await req.json();
     const { walletId, to, amount, currency, method, note } = body;
 
