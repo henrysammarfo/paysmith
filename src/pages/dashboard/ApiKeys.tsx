@@ -106,9 +106,11 @@ const ApiKeys = () => {
       const newKey = prefix + crypto.randomUUID().replace(/-/g, "");
       const field = newKeyEnv === "live" ? "live_api_key" : "test_api_key";
 
+      const updateData: Record<string, string> = {};
+      updateData[field] = newKey;
       const { error } = await supabase
         .from("developers")
-        .update({ [field]: newKey })
+        .update(updateData as any)
         .eq("id", developer.id);
 
       if (error) throw error;
