@@ -134,7 +134,7 @@ const ApiUsageStats = () => {
       )}
 
       <h2 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-        <Zap size={14} /> API Usage
+        <Gauge size={14} /> API Usage
       </h2>
 
       {/* Stats row */}
