@@ -569,13 +569,22 @@ const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
                         </div>
                       </div>
 
-                      {/* Interactive code snippets */}
+                      {/* Interactive code snippets - Test Payment */}
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
                           <Code size={14} className="text-primary" />
                           <p className="text-xs font-medium">Make a test payment</p>
                         </div>
-                        <SnippetTabs testKey={testKey} walletId={createdWallet?.walletId || createdWallet?.id} />
+                        <SnippetTabs testKey={testKey} walletId={createdWallet?.walletId || createdWallet?.id} showTryLive />
+                      </div>
+
+                      {/* Wallet creation snippets */}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Plus size={14} className="text-primary" />
+                          <p className="text-xs font-medium">Create wallets via API</p>
+                        </div>
+                        <WalletCreationSnippets testKey={testKey} />
                       </div>
 
                       <button
