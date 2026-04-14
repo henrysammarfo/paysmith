@@ -34,7 +34,25 @@ interface HistoryEntry {
 
 const HISTORY_KEY = "ps_playground_history";
 const MAX_HISTORY = 20;
-const BASE_URL = "https://your-project.supabase.co/functions/v1";
+
+type Environment = "sandbox" | "production";
+
+const ENV_CONFIG: Record<Environment, { label: string; baseUrl: string; keyPrefix: string; badge: string; badgeClass: string }> = {
+  sandbox: {
+    label: "Sandbox",
+    baseUrl: "https://your-project.supabase.co/functions/v1",
+    keyPrefix: "ps_test_",
+    badge: "Test Mode",
+    badgeClass: "bg-accent text-accent-foreground",
+  },
+  production: {
+    label: "Production",
+    baseUrl: "https://your-project.supabase.co/functions/v1",
+    keyPrefix: "ps_live_",
+    badge: "Live Mode",
+    badgeClass: "bg-destructive/20 text-destructive",
+  },
+};
 
 const endpoints: Record<EndpointKey, EndpointConfig> = {
   "agents-create": {
@@ -77,9 +95,11 @@ function generateSnippet(
   config: EndpointConfig,
   apiKey: string,
   body: string,
-  queryValues: Record<string, string>
+  queryValues: Record<string, string>,
+  env: Environment
 ): string {
-  const maskedKey = apiKey ? apiKey.slice(0, 12) + "..." : "ps_test_YOUR_KEY";
+  const BASE_URL = ENV_CONFIG[env].baseUrl;
+  const maskedKey = apiKey ? apiKey.slice(0, 12) + "..." : `${ENV_CONFIG[env].keyPrefix}YOUR_KEY`;
   let url = `${BASE_URL}/${endpoint}`;
   const qp = config.queryParams
     ?.filter((p) => queryValues[p.name]?.trim())
