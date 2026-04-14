@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { analytics, EVENTS } from "@/lib/posthog";
 
 interface AuthContextType {
   session: Session | null;
@@ -23,15 +24,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event, session) => {
         setSession(session);
         setLoading(false);
+
+        if (session?.user) {
+          analytics.identify(session.user.id);
+          if (event === "SIGNED_IN") {
+            analytics.track(EVENTS.LOGIN);
+          }
+        } else {
+          analytics.reset();
+        }
       }
     );
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
+      if (session?.user) {
+        analytics.identify(session.user.id);
+      }
     });
 
     return () => subscription.unsubscribe();
