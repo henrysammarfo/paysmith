@@ -7,6 +7,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import OnboardingWizard from "@/components/OnboardingWizard";
+import ApiUsageStats from "@/components/ApiUsageStats";
 
 interface DailyStat {
   date: string;
@@ -253,6 +254,9 @@ const Overview = () => {
           )}
         </div>
       </div>
+
+      {/* API Usage Stats */}
+      <ApiUsageStats />
     </div>
   );
 };
