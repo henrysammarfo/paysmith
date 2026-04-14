@@ -18,6 +18,7 @@ interface DailyStat {
 const Overview = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [totalVolume, setTotalVolume] = useState(0);
   const [totalFees, setTotalFees] = useState(0);
   const [activeWallets, setActiveWallets] = useState(0);
