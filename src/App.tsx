@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/hooks/useTheme";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import AdminRoute from "@/components/AdminRoute";
 import DashboardLayout from "@/components/DashboardLayout";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -61,7 +62,7 @@ const App = () => (
               <Route path="api-keys" element={<ApiKeys />} />
               <Route path="webhook-logs" element={<WebhookLogs />} />
               <Route path="settings" element={<DashboardSettings />} />
-              <Route path="metrics" element={<AdminMetrics />} />
+              <Route path="metrics" element={<AdminRoute><AdminMetrics /></AdminRoute>} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
