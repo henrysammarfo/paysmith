@@ -124,7 +124,7 @@ Deno.serve(async (req) => {
 
     const { data: wallets, error } = await supabase
       .from("agent_wallets")
-      .select("*")
+      .select("id, name, country, currency, status, balance_ghs, balance_ngn, balance_usdc, payment_methods, total_volume, total_txns, created_at")
       .eq("owner_id", developer.id)
       .order("created_at", { ascending: false });
 
