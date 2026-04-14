@@ -148,18 +148,30 @@ Deno.serve(async (req) => {
 
     // Authenticate via API key
     const apiKey = req.headers.get("x-api-key");
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: "Missing X-API-KEY header" }), {
+    if (!apiKey || apiKey.length > 100) {
+      return new Response(JSON.stringify({ error: "Missing or invalid X-API-KEY header" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { data: developer } = await supabase
+    // Use separate .eq() calls to prevent SQL injection via .or() interpolation
+    let developer = null;
+    const { data: devByLive } = await supabase
       .from("developers")
       .select("id")
-      .or(`live_api_key.eq.${apiKey},test_api_key.eq.${apiKey}`)
-      .single();
+      .eq("live_api_key", apiKey)
+      .maybeSingle();
+    if (devByLive) {
+      developer = devByLive;
+    } else {
+      const { data: devByTest } = await supabase
+        .from("developers")
+        .select("id")
+        .eq("test_api_key", apiKey)
+        .maybeSingle();
+      developer = devByTest;
+    }
 
     if (!developer) {
       return new Response(JSON.stringify({ error: "Invalid API key" }), {
@@ -187,9 +199,31 @@ Deno.serve(async (req) => {
       );
     }
 
-    if (typeof amount !== "number" || amount <= 0) {
+    if (typeof amount !== "number" || amount <= 0 || amount > 10_000_000) {
       return new Response(
-        JSON.stringify({ error: "amount must be a positive number" }),
+        JSON.stringify({ error: "amount must be a positive number up to 10,000,000" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const VALID_METHODS = ["mobile_money", "bank_transfer", "crypto", "card"];
+    if (!VALID_METHODS.includes(method)) {
+      return new Response(
+        JSON.stringify({ error: `method must be one of: ${VALID_METHODS.join(", ")}` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (typeof to !== "string" || to.length < 3 || to.length > 100) {
+      return new Response(
+        JSON.stringify({ error: "to must be a string between 3-100 characters" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (typeof currency !== "string" || !/^[A-Z]{3}$/.test(currency)) {
+      return new Response(
+        JSON.stringify({ error: "currency must be a 3-letter ISO code (e.g. NGN)" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
