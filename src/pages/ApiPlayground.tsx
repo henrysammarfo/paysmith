@@ -265,6 +265,7 @@ function saveHistory(entries: HistoryEntry[]) {
 
 const ApiPlayground = () => {
   const [selected, setSelected] = useState<EndpointKey>("pay");
+  const [env, setEnv] = useState<Environment>("sandbox");
   const [apiKey, setApiKey] = useState("");
   const [body, setBody] = useState(endpoints.pay.defaultBody);
   const [queryValues, setQueryValues] = useState<Record<string, string>>({});
@@ -275,6 +276,8 @@ const ApiPlayground = () => {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [showSnippet, setShowSnippet] = useState(false);
+
+  const envConfig = ENV_CONFIG[env];
 
   useEffect(() => {
     setHistory(loadHistory());
