@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
     if (walletId) {
       const { data: wallet, error } = await supabase
         .from("agent_wallets")
-        .select("*")
+        .select("id, name, country, currency, status, balance_ghs, balance_ngn, balance_usdc, payment_methods, spending_policy, total_volume, total_txns, created_at")
         .eq("id", walletId)
         .eq("owner_id", developer.id)
         .single();
