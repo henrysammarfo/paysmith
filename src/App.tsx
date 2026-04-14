@@ -14,6 +14,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Pricing from "./pages/Pricing";
 import Docs from "./pages/Docs";
+import ApiPlayground from "./pages/ApiPlayground";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Overview from "./pages/dashboard/Overview";
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/docs" element={<Docs />} />
+            <Route path="/playground" element={<ApiPlayground />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route

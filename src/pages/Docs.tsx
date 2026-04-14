@@ -1,19 +1,20 @@
 import { Link, useLocation } from "react-router-dom";
-import { ArrowLeft, Book, Code, Zap, Shield, Terminal, ChevronRight, Copy, Check, Server, Gauge } from "lucide-react";
+import { ArrowLeft, Book, Code, Zap, Shield, Terminal, ChevronRight, Copy, Check, Server, Gauge, Search, X } from "lucide-react";
 import Footer from "@/components/Footer";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { Input } from "@/components/ui/input";
 
 const sidebarSections = [
-  { id: "quickstart", label: "Quick Start", icon: Zap },
-  { id: "authentication", label: "Authentication", icon: Shield },
-  { id: "api-agents-create", label: "POST /agents-create", icon: Server },
-  { id: "api-agents-balance", label: "GET /agents-balance", icon: Server },
-  { id: "api-pay", label: "POST /pay", icon: Server },
-  { id: "multi-rail", label: "Multi-Rail Routing", icon: Book },
-  { id: "policies", label: "Policy Enforcement", icon: Shield },
-  { id: "webhooks", label: "Webhooks", icon: Code },
-  { id: "rate-limits", label: "Rate Limits", icon: Gauge },
-  { id: "errors", label: "Error Codes", icon: Shield },
+  { id: "quickstart", label: "Quick Start", icon: Zap, keywords: ["getting started", "base url", "prerequisites", "setup"] },
+  { id: "authentication", label: "Authentication", icon: Shield, keywords: ["api key", "x-api-key", "test", "live", "security", "header"] },
+  { id: "api-agents-create", label: "POST /agents-create", icon: Server, keywords: ["create wallet", "agent", "spending policy", "payment methods", "country", "currency"] },
+  { id: "api-agents-balance", label: "GET /agents-balance", icon: Server, keywords: ["balance", "wallet", "query", "list wallets"] },
+  { id: "api-pay", label: "POST /pay", icon: Server, keywords: ["payment", "send money", "mobile money", "bank transfer", "crypto", "recipient"] },
+  { id: "multi-rail", label: "Multi-Rail Routing", icon: Book, keywords: ["chimoney", "flutterwave", "sandbox", "provider", "routing", "fee"] },
+  { id: "policies", label: "Policy Enforcement", icon: Shield, keywords: ["spending policy", "daily limit", "max transaction", "approval"] },
+  { id: "webhooks", label: "Webhooks", icon: Code, keywords: ["webhook", "signature", "hmac", "event", "transaction.settled", "transaction.failed"] },
+  { id: "rate-limits", label: "Rate Limits", icon: Gauge, keywords: ["rate limit", "throttle", "429", "retry", "window"] },
+  { id: "errors", label: "Error Codes", icon: Shield, keywords: ["error", "status code", "400", "401", "403", "404", "500"] },
 ];
 
 function CodeBlock({ code, language = "typescript" }: { code: string; language?: string }) {
@@ -68,8 +69,20 @@ const BASE_URL = "https://your-project.supabase.co/functions/v1";
 
 const Docs = () => {
   const [activeSection, setActiveSection] = useState("quickstart");
+  const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const filteredSections = useMemo(() => {
+    if (!searchQuery.trim()) return sidebarSections;
+    const q = searchQuery.toLowerCase();
+    return sidebarSections.filter(
+      (s) =>
+        s.label.toLowerCase().includes(q) ||
+        s.id.toLowerCase().includes(q) ||
+        s.keywords.some((k) => k.includes(q))
+    );
+  }, [searchQuery]);
 
   useEffect(() => {
     const hash = location.hash.replace("#", "");
@@ -92,9 +105,26 @@ const Docs = () => {
           <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
             <ArrowLeft size={16} /> Back
           </Link>
-          <h2 className="text-lg font-semibold mb-4">API Reference</h2>
+          <h2 className="text-lg font-semibold mb-3">API Reference</h2>
+          
+          {/* Search */}
+          <div className="relative mb-4">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search docs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 h-8 text-xs"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                <X size={12} />
+              </button>
+            )}
+          </div>
+
           <nav className="space-y-1">
-            {sidebarSections.map((s) => (
+            {filteredSections.map((s) => (
               <button
                 key={s.id}
                 onClick={() => scrollToSection(s.id)}
@@ -108,7 +138,20 @@ const Docs = () => {
                 {s.label}
               </button>
             ))}
+            {filteredSections.length === 0 && (
+              <p className="text-xs text-muted-foreground px-3 py-2">No matching sections</p>
+            )}
           </nav>
+
+          {/* Playground link */}
+          <div className="mt-6 pt-4 border-t border-border">
+            <Link
+              to="/playground"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-primary hover:bg-primary/10 transition-colors font-medium"
+            >
+              <Terminal size={14} /> API Playground
+            </Link>
+          </div>
         </aside>
 
         {/* Main content */}
