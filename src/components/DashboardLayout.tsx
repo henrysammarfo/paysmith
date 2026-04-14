@@ -15,6 +15,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const NAV_ITEMS = [
   { label: "Overview", path: "/dashboard", icon: LayoutDashboard },
@@ -115,6 +116,7 @@ const DashboardLayout = () => {
           </button>
           <div className="hidden lg:block" />
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <Avatar className="h-8 w-8">
               <AvatarImage src={profile.avatar_url || undefined} />
               <AvatarFallback className="bg-secondary text-xs">{initials}</AvatarFallback>

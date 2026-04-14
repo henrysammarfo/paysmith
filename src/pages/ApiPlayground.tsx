@@ -34,7 +34,25 @@ interface HistoryEntry {
 
 const HISTORY_KEY = "ps_playground_history";
 const MAX_HISTORY = 20;
-const BASE_URL = "https://your-project.supabase.co/functions/v1";
+
+type Environment = "sandbox" | "production";
+
+const ENV_CONFIG: Record<Environment, { label: string; baseUrl: string; keyPrefix: string; badge: string; badgeClass: string }> = {
+  sandbox: {
+    label: "Sandbox",
+    baseUrl: "https://your-project.supabase.co/functions/v1",
+    keyPrefix: "ps_test_",
+    badge: "Test Mode",
+    badgeClass: "bg-accent text-accent-foreground",
+  },
+  production: {
+    label: "Production",
+    baseUrl: "https://your-project.supabase.co/functions/v1",
+    keyPrefix: "ps_live_",
+    badge: "Live Mode",
+    badgeClass: "bg-destructive/20 text-destructive",
+  },
+};
 
 const endpoints: Record<EndpointKey, EndpointConfig> = {
   "agents-create": {
@@ -77,9 +95,11 @@ function generateSnippet(
   config: EndpointConfig,
   apiKey: string,
   body: string,
-  queryValues: Record<string, string>
+  queryValues: Record<string, string>,
+  env: Environment
 ): string {
-  const maskedKey = apiKey ? apiKey.slice(0, 12) + "..." : "ps_test_YOUR_KEY";
+  const BASE_URL = ENV_CONFIG[env].baseUrl;
+  const maskedKey = apiKey ? apiKey.slice(0, 12) + "..." : `${ENV_CONFIG[env].keyPrefix}YOUR_KEY`;
   let url = `${BASE_URL}/${endpoint}`;
   const qp = config.queryParams
     ?.filter((p) => queryValues[p.name]?.trim())
@@ -178,17 +198,19 @@ function SnippetPanel({
   apiKey,
   body,
   queryValues,
+  env,
 }: {
   endpoint: EndpointKey;
   config: EndpointConfig;
   apiKey: string;
   body: string;
   queryValues: Record<string, string>;
+  env: Environment;
 }) {
   const [copied, setCopied] = useState<string | null>(null);
 
   const handleCopy = (lang: SnippetLang) => {
-    const snippet = generateSnippet(lang, endpoint, config, apiKey, body, queryValues);
+    const snippet = generateSnippet(lang, endpoint, config, apiKey, body, queryValues, env);
     navigator.clipboard.writeText(snippet);
     setCopied(lang);
     setTimeout(() => setCopied(null), 2000);
@@ -212,7 +234,7 @@ function SnippetPanel({
           <TabsContent key={lang} value={lang} className="px-4 pb-4 mt-0">
             <div className="relative">
               <pre className="p-4 text-sm font-mono text-foreground bg-secondary/50 rounded-lg overflow-x-auto whitespace-pre-wrap mt-2">
-                {generateSnippet(lang, endpoint, config, apiKey, body, queryValues)}
+                {generateSnippet(lang, endpoint, config, apiKey, body, queryValues, env)}
               </pre>
               <button
                 onClick={() => handleCopy(lang)}
@@ -243,6 +265,7 @@ function saveHistory(entries: HistoryEntry[]) {
 
 const ApiPlayground = () => {
   const [selected, setSelected] = useState<EndpointKey>("pay");
+  const [env, setEnv] = useState<Environment>("sandbox");
   const [apiKey, setApiKey] = useState("");
   const [body, setBody] = useState(endpoints.pay.defaultBody);
   const [queryValues, setQueryValues] = useState<Record<string, string>>({});
@@ -253,6 +276,8 @@ const ApiPlayground = () => {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [showSnippet, setShowSnippet] = useState(false);
+
+  const envConfig = ENV_CONFIG[env];
 
   useEffect(() => {
     setHistory(loadHistory());
@@ -421,8 +446,31 @@ const ApiPlayground = () => {
           </div>
         </div>
         <p className="text-muted-foreground mb-8">
-          Test Paysmith API endpoints with your test API key. All requests hit the sandbox.
+          Test Paysmith API endpoints with your API key. Switch environments to test sandbox or production.
         </p>
+
+        {/* Environment selector */}
+        <div className="mb-6 flex items-center gap-3">
+          <span className="text-sm font-medium">Environment</span>
+          <div className="flex rounded-lg border border-border overflow-hidden">
+            {(["sandbox", "production"] as Environment[]).map((e) => (
+              <button
+                key={e}
+                onClick={() => setEnv(e)}
+                className={`px-4 py-1.5 text-sm transition-colors ${
+                  env === e
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {ENV_CONFIG[e].label}
+              </button>
+            ))}
+          </div>
+          <span className={`text-xs font-medium px-2 py-0.5 rounded ${envConfig.badgeClass}`}>
+            {envConfig.badge}
+          </span>
+        </div>
 
         {/* Snippet panel */}
         {showSnippet && (
@@ -433,6 +481,7 @@ const ApiPlayground = () => {
               apiKey={apiKey}
               body={body}
               queryValues={queryValues}
+              env={env}
             />
           </div>
         )}
@@ -495,7 +544,7 @@ const ApiPlayground = () => {
           <label className="text-sm font-medium mb-2 block">API Key</label>
           <Input
             type="password"
-            placeholder="ps_test_..."
+            placeholder={`${envConfig.keyPrefix}...`}
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             className="font-mono max-w-md"

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import CodeIntegrationSection from "@/components/CodeIntegrationSection";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import SectionDivider from "@/components/SectionDivider";
 import ProblemSection from "@/components/ProblemSection";
 import FeaturesSection from "@/components/FeaturesSection";
@@ -94,8 +95,8 @@ const Index = () => {
           </div>
 
           {/* Right Buttons */}
-          <div className="flex items-center gap-3">
-            {/* Hamburger */}
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
             <button
               className="animate-blur-fade-up flex lg:hidden items-center justify-center w-10 h-10 rounded-full liquid-glass"
               style={{ animationDelay: "350ms" }}
