@@ -100,15 +100,15 @@ const WebhookLogs = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Webhook Logs</h1>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex items-center justify-between gap-2">
+        <h1 className="text-xl sm:text-2xl font-semibold">Webhook Logs</h1>
         <button
           onClick={fetchLogs}
-          className="flex items-center gap-2 rounded-xl border border-border bg-secondary/50 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="flex items-center gap-2 rounded-xl border border-border bg-secondary/50 px-3 sm:px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <RefreshCw size={14} />
-          Refresh
+          <span className="hidden sm:inline">Refresh</span>
         </button>
       </div>
 
@@ -140,14 +140,14 @@ const WebhookLogs = () => {
             const status = getStatusInfo(log);
             const StatusIcon = status.icon;
             return (
-              <div key={log.id} className="rounded-xl border border-border bg-card p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${status.bg}`}>
+              <div key={log.id} className="rounded-xl border border-border bg-card p-3 sm:p-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 ${status.bg}`}>
                       <StatusIcon size={14} className={status.color} />
                     </div>
-                    <div>
-                      <span className="text-sm font-mono font-medium">{log.event_type}</span>
+                    <div className="min-w-0">
+                      <span className="text-xs sm:text-sm font-mono font-medium truncate block">{log.event_type}</span>
                       <p className="text-xs text-muted-foreground">
                         {new Date(log.created_at).toLocaleString("en-US", {
                           month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit",
@@ -155,12 +155,12 @@ const WebhookLogs = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`text-sm font-medium ${status.color}`}>{status.label}</span>
+                  <div className="flex items-center gap-2 sm:gap-3 ml-9 sm:ml-0">
+                    <span className={`text-xs sm:text-sm font-medium ${status.color}`}>{status.label}</span>
                     <button
                       onClick={() => handleRetry(log)}
                       disabled={retrying === log.id}
-                      className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-1.5 rounded-lg border border-border px-2 sm:px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors disabled:opacity-50"
                     >
                       <RefreshCw size={12} className={retrying === log.id ? "animate-spin" : ""} />
                       Retry

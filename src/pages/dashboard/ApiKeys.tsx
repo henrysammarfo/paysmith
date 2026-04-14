@@ -186,8 +186,8 @@ const ApiKeys = () => {
   }
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-2xl font-semibold">API Keys & Webhooks</h1>
+    <div className="space-y-6 sm:space-y-8">
+      <h1 className="text-xl sm:text-2xl font-semibold">API Keys & Webhooks</h1>
 
       {/* API Keys */}
       <div className="space-y-4">
