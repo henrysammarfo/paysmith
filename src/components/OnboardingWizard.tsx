@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Check, Wallet, Key, Webhook, Copy, Eye, EyeOff, ChevronRight, RefreshCw, Sparkles, Code } from "lucide-react";
+import { Check, Wallet, Key, Webhook, Copy, Eye, EyeOff, ChevronRight, RefreshCw, Sparkles, Code, Play, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
