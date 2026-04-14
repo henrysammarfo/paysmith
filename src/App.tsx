@@ -20,6 +20,7 @@ import Overview from "./pages/dashboard/Overview";
 import Wallets from "./pages/dashboard/Wallets";
 import ApiKeys from "./pages/dashboard/ApiKeys";
 import DashboardSettings from "./pages/dashboard/DashboardSettings";
+import Transactions from "./pages/dashboard/Transactions";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
             >
               <Route index element={<Overview />} />
               <Route path="wallets" element={<Wallets />} />
+              <Route path="transactions" element={<Transactions />} />
               <Route path="api-keys" element={<ApiKeys />} />
               <Route path="settings" element={<DashboardSettings />} />
             </Route>

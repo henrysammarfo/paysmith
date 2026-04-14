@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Wallet,
+  ArrowUpDown,
   Key,
   Settings,
   LogOut,
@@ -17,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const NAV_ITEMS = [
   { label: "Overview", path: "/dashboard", icon: LayoutDashboard },
   { label: "Wallets", path: "/dashboard/wallets", icon: Wallet },
+  { label: "Transactions", path: "/dashboard/transactions", icon: ArrowUpDown },
   { label: "API Keys", path: "/dashboard/api-keys", icon: Key },
   { label: "Settings", path: "/dashboard/settings", icon: Settings },
 ];
