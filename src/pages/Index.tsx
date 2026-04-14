@@ -11,7 +11,6 @@ import Footer from "@/components/Footer";
 import {
   Menu,
   X,
-  Star,
   Clock,
   Calendar,
   Play,
@@ -33,7 +32,7 @@ const Index = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="relative min-h-screen w-screen overflow-x-hidden bg-background">
+    <div className="relative min-h-screen w-full overflow-x-hidden bg-background">
       {/* Background Video (shared across all sections) */}
       <video
         autoPlay
@@ -55,7 +54,7 @@ const Index = () => {
       />
 
       {/* Hero Section */}
-      <div className="relative h-screen w-full overflow-hidden">
+      <div className="relative min-h-screen md:h-screen w-full overflow-hidden">
 
       {/* Main Content */}
       <div className="relative z-10 flex h-full flex-col">
@@ -132,14 +131,14 @@ const Index = () => {
               : "-translate-y-4 opacity-0 pointer-events-none"
           }`}
         >
-          <div className="bg-[hsl(0,0%,7%)]/95 backdrop-blur-lg border-t border-b border-[hsl(0,0%,20%)] shadow-2xl">
+          <div className="bg-background/95 backdrop-blur-lg border-t border-b border-border shadow-2xl">
             <div className="flex flex-col px-4 py-2">
               {NAV_LINKS.map((link, i) =>
                 link.isPage ? (
                   <Link
                     key={link.label}
                     to={link.href}
-                    className="py-3 px-3 rounded-lg text-foreground/80 hover:bg-[hsl(0,0%,15%)]/50 transition-all duration-300"
+                    className="py-3 px-3 rounded-lg text-foreground/80 hover:bg-accent/50 transition-all duration-300"
                     style={{ transitionDelay: menuOpen ? `${i * 50}ms` : "0ms" }}
                   >
                     {link.label}
@@ -148,7 +147,7 @@ const Index = () => {
                   <a
                     key={link.label}
                     href={link.href}
-                    className="py-3 px-3 rounded-lg text-foreground/80 hover:bg-[hsl(0,0%,15%)]/50 transition-all duration-300"
+                    className="py-3 px-3 rounded-lg text-foreground/80 hover:bg-accent/50 transition-all duration-300"
                     style={{ transitionDelay: menuOpen ? `${i * 50}ms` : "0ms" }}
                   >
                     {link.label}
@@ -169,13 +168,6 @@ const Index = () => {
                 className="animate-blur-fade-up flex flex-wrap items-center gap-3 sm:gap-6 mb-6 md:mb-8 text-xs sm:text-sm"
                 style={{ animationDelay: "300ms" }}
               >
-                <span className="flex items-center gap-1.5 font-medium">
-                  <Star
-                    size={16}
-                    className="fill-foreground sm:w-5 sm:h-5"
-                  />
-                  YC W26
-                </span>
                 <span className="flex items-center gap-1.5">
                   <Clock size={16} className="sm:w-5 sm:h-5" />
                   3-Line Integration
