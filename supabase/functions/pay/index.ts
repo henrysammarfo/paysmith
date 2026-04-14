@@ -182,12 +182,30 @@ Deno.serve(async (req) => {
 
     // Rate limit check
     const rl = checkRateLimit(apiKey);
-    const rlHeaders = {
+    const RATE_WARN_THRESHOLD = 0.8;
+    const usagePercent = ((RATE_LIMIT - rl.remaining) / RATE_LIMIT) * 100;
+    const isNearLimit = rl.remaining <= Math.floor(RATE_LIMIT * (1 - RATE_WARN_THRESHOLD));
+    const rlHeaders: Record<string, string> = {
       "X-RateLimit-Limit": String(RATE_LIMIT),
       "X-RateLimit-Remaining": String(rl.remaining),
       "X-RateLimit-Reset": String(rl.reset),
     };
+    if (isNearLimit && rl.allowed) {
+      rlHeaders["X-RateLimit-Warning"] = `Usage at ${usagePercent.toFixed(0)}% (${rl.remaining} requests remaining)`;
+      console.warn(`[RATE-LIMIT-WARNING] Developer ${developer.id} at ${usagePercent.toFixed(0)}% usage (${rl.remaining} remaining)`);
+
+      // Log rate limit warning for dashboard visibility
+      try {
+        await supabase.from("api_call_logs").insert({
+          developer_id: developer.id,
+          endpoint: "/pay (rate-limit-warning)",
+          method: "SYSTEM",
+          status_code: 0,
+        });
+      } catch (_) { /* non-blocking */ }
+    }
     if (!rl.allowed) {
+      console.warn(`[RATE-LIMIT-EXCEEDED] Developer ${developer.id} exceeded rate limit`);
       return new Response(
         JSON.stringify({ error: `Rate limit exceeded. Try again in ${rl.retryAfter} seconds.`, retryAfter: rl.retryAfter }),
         { status: 429, headers: { ...corsHeaders, ...rlHeaders, "Content-Type": "application/json", "Retry-After": String(rl.retryAfter) } }
