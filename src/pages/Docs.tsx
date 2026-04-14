@@ -155,11 +155,27 @@ const Docs = () => {
         </aside>
 
         {/* Main content */}
-        <main ref={contentRef} className="flex-1 px-4 sm:px-8 lg:px-16 py-8 sm:py-12 max-w-4xl">
+        <main ref={contentRef} className="flex-1 min-w-0 px-4 sm:px-8 lg:px-16 py-8 sm:py-12 max-w-4xl">
           <div className="lg:hidden mb-8">
-            <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
               <ArrowLeft size={16} /> Back
             </Link>
+            {/* Mobile section nav */}
+            <div className="flex flex-wrap gap-2">
+              {sidebarSections.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => scrollToSection(s.id)}
+                  className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                    activeSection === s.id
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "border-border text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Quick Start */}
