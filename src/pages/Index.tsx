@@ -62,7 +62,7 @@ const Index = () => {
         {/* Main Content */}
         <div className="relative z-10 flex h-full flex-col">
           {/* Navbar */}
-          <nav className="relative z-50 flex items-center justify-between px-4 sm:px-6 md:px-12 py-4 md:py-6">
+          <nav className="relative z-[60] flex items-center justify-between px-4 sm:px-6 md:px-12 py-4 md:py-6">
             <div
               className="animate-blur-fade-up text-xl md:text-2xl font-semibold tracking-widest"
               style={{ animationDelay: "0ms" }}

@@ -441,8 +441,8 @@ const ApiPlayground = () => {
           <ArrowLeft size={16} /> Back to Docs
         </Link>
 
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-4xl font-semibold tracking-tight">API Playground</h1>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">API Playground</h1>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -451,7 +451,7 @@ const ApiPlayground = () => {
               className="gap-2"
             >
               <Code size={14} />
-              Snippet
+              <span className="hidden sm:inline">Snippet</span>
             </Button>
             <Button
               variant="outline"
@@ -460,7 +460,7 @@ const ApiPlayground = () => {
               className="gap-2"
             >
               <History size={14} />
-              History{history.length > 0 && ` (${history.length})`}
+              <span className="hidden sm:inline">History</span>{history.length > 0 && ` (${history.length})`}
             </Button>
           </div>
         </div>
@@ -469,7 +469,7 @@ const ApiPlayground = () => {
         </p>
 
         {/* Environment selector */}
-        <div className="mb-6 flex items-center gap-3">
+        <div className="mb-6 flex flex-wrap items-center gap-3">
           <span className="text-sm font-medium">Environment</span>
           <div className="flex rounded-lg border border-border overflow-hidden">
             {(["sandbox", "production"] as Environment[]).map((e) => (
@@ -482,7 +482,7 @@ const ApiPlayground = () => {
                     setEnv(e);
                   }
                 }}
-                className={`px-4 py-1.5 text-sm transition-colors ${
+                className={`px-3 sm:px-4 py-1.5 text-sm transition-colors ${
                   env === e
                     ? "bg-primary text-primary-foreground"
                     : "bg-card text-muted-foreground hover:text-foreground"
