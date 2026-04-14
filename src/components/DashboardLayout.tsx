@@ -12,10 +12,12 @@ import {
   LogOut,
   Menu,
   X,
-  ChevronDown,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const NAV_ITEMS = [
   { label: "Overview", path: "/dashboard", icon: LayoutDashboard },
@@ -30,7 +32,8 @@ const DashboardLayout = () => {
   const { user, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null }>({ full_name: null, avatar_url: null });
 
   useEffect(() => {
@@ -55,17 +58,96 @@ const DashboardLayout = () => {
     ? profile.full_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
     : user?.email?.[0]?.toUpperCase() || "U";
 
+  const sidebarWidth = collapsed ? "w-[68px]" : "w-64";
+
   return (
     <div className="flex h-screen bg-background">
-      {/* Sidebar */}
+      {/* Desktop / Tablet Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border flex flex-col transition-transform duration-300 lg:static lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        className={`hidden md:flex fixed inset-y-0 left-0 z-30 ${sidebarWidth} bg-card border-r border-border flex-col transition-all duration-300`}
+      >
+        {/* Logo */}
+        <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"} px-4 py-5 border-b border-border`}>
+          {!collapsed && (
+            <Link to="/" className="text-xl font-semibold tracking-widest text-foreground">PAYSMITH</Link>
+          )}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+          >
+            {collapsed ? <ChevronsRight size={18} /> : <ChevronsLeft size={18} />}
+          </button>
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 px-2 py-4 space-y-1">
+          {NAV_ITEMS.map((item) => {
+            const active = location.pathname === item.path;
+            const link = (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`flex items-center ${collapsed ? "justify-center" : "gap-3"} px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                  active
+                    ? "bg-secondary text-foreground font-medium"
+                    : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+                }`}
+              >
+                <item.icon size={18} className="shrink-0" />
+                {!collapsed && <span>{item.label}</span>}
+              </Link>
+            );
+
+            if (collapsed) {
+              return (
+                <Tooltip key={item.path} delayDuration={0}>
+                  <TooltipTrigger asChild>{link}</TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={8}>
+                    {item.label}
+                  </TooltipContent>
+                </Tooltip>
+              );
+            }
+
+            return link;
+          })}
+        </nav>
+
+        {/* Sign Out */}
+        <div className="px-2 py-4 border-t border-border">
+          {collapsed ? (
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center justify-center w-full px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-secondary/50 hover:text-foreground transition-colors"
+                >
+                  <LogOut size={18} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={8}>Sign Out</TooltipContent>
+            </Tooltip>
+          ) : (
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-secondary/50 hover:text-foreground w-full transition-colors"
+            >
+              <LogOut size={18} />
+              Sign Out
+            </button>
+          )}
+        </div>
+      </aside>
+
+      {/* Mobile Sidebar (full overlay) */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border flex flex-col transition-transform duration-300 md:hidden ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex items-center justify-between px-6 py-5 border-b border-border">
           <Link to="/" className="text-xl font-semibold tracking-widest text-foreground">PAYSMITH</Link>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-foreground">
+          <button onClick={() => setMobileOpen(false)} className="text-foreground">
             <X size={20} />
           </button>
         </div>
@@ -77,7 +159,7 @@ const DashboardLayout = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                onClick={() => setSidebarOpen(false)}
+                onClick={() => setMobileOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                   active
                     ? "bg-secondary text-foreground font-medium"
@@ -102,19 +184,19 @@ const DashboardLayout = () => {
         </div>
       </aside>
 
-      {/* Overlay */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setSidebarOpen(false)} />
+      {/* Mobile Overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={() => setMobileOpen(false)} />
       )}
 
       {/* Main */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${collapsed ? "md:ml-[68px]" : "md:ml-64"}`}>
         {/* Top Bar */}
         <header className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-border">
-          <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-foreground">
+          <button onClick={() => setMobileOpen(true)} className="md:hidden text-foreground">
             <Menu size={20} />
           </button>
-          <div className="hidden lg:block" />
+          <div className="hidden md:block" />
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <Avatar className="h-8 w-8">
