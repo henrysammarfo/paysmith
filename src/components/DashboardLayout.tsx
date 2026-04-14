@@ -20,14 +20,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { label: "Overview", path: "/dashboard", icon: LayoutDashboard },
   { label: "Wallets", path: "/dashboard/wallets", icon: Wallet },
   { label: "Transactions", path: "/dashboard/transactions", icon: ArrowUpDown },
   { label: "API Keys", path: "/dashboard/api-keys", icon: Key },
   { label: "Webhook Logs", path: "/dashboard/webhook-logs", icon: Webhook },
-  { label: "Metrics", path: "/dashboard/metrics", icon: BarChart3 },
   { label: "Settings", path: "/dashboard/settings", icon: Settings },
+];
+
+const ADMIN_NAV_ITEMS = [
+  { label: "Metrics", path: "/dashboard/metrics", icon: BarChart3 },
 ];
 
 const DashboardLayout = () => {
@@ -37,6 +40,7 @@ const DashboardLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null }>({ full_name: null, avatar_url: null });
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -48,8 +52,13 @@ const DashboardLayout = () => {
         .then(({ data }) => {
           if (data) setProfile(data);
         });
+      supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }).then(({ data }) => {
+        setIsAdmin(!!data);
+      });
     }
   }, [user]);
+
+  const NAV_ITEMS = isAdmin ? [...BASE_NAV_ITEMS, ...ADMIN_NAV_ITEMS] : BASE_NAV_ITEMS;
 
   const handleSignOut = async () => {
     await signOut();
