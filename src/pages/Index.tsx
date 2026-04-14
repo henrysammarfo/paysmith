@@ -11,7 +11,6 @@ import Footer from "@/components/Footer";
 import {
   Menu,
   X,
-  Star,
   Clock,
   Calendar,
   Play,
@@ -33,7 +32,7 @@ const Index = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="relative min-h-screen w-screen overflow-x-hidden bg-background">
+    <div className="relative min-h-screen w-full overflow-x-hidden bg-background">
       {/* Background Video (shared across all sections) */}
       <video
         autoPlay
@@ -169,13 +168,6 @@ const Index = () => {
                 className="animate-blur-fade-up flex flex-wrap items-center gap-3 sm:gap-6 mb-6 md:mb-8 text-xs sm:text-sm"
                 style={{ animationDelay: "300ms" }}
               >
-                <span className="flex items-center gap-1.5 font-medium">
-                  <Star
-                    size={16}
-                    className="fill-foreground sm:w-5 sm:h-5"
-                  />
-                  YC W26
-                </span>
                 <span className="flex items-center gap-1.5">
                   <Clock size={16} className="sm:w-5 sm:h-5" />
                   3-Line Integration
