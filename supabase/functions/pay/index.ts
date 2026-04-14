@@ -272,6 +272,39 @@ Deno.serve(async (req) => {
       })
       .eq("id", walletId);
 
+    // ── Fire webhook delivery (async, non-blocking) ──
+    const eventType = rail.status === "settled" ? "transaction.settled" : "transaction.failed";
+    try {
+      await fetch(
+        `${Deno.env.get("SUPABASE_URL")}/functions/v1/webhook-deliver`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+          },
+          body: JSON.stringify({
+            developerId: developer.id,
+            eventType,
+            payload: {
+              txId: rail.railTxId,
+              walletId,
+              amount,
+              currency,
+              method,
+              recipient: to,
+              status: rail.status,
+              fee: rail.fee,
+              provider: rail.provider,
+              timestamp: new Date().toISOString(),
+            },
+          }),
+        }
+      );
+    } catch (whErr) {
+      console.error("Webhook fire failed (non-blocking):", whErr);
+    }
+
     return new Response(
       JSON.stringify({
         txId: rail.railTxId,
