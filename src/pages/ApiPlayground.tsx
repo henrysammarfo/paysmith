@@ -1,14 +1,16 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, Play, Loader2, Copy, Check, History, RotateCcw, Trash2 } from "lucide-react";
+import { ArrowLeft, Play, Loader2, Copy, Check, History, RotateCcw, Trash2, Code, Clock } from "lucide-react";
 import Footer from "@/components/Footer";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 
 type EndpointKey = "agents-create" | "agents-balance" | "pay";
+type SnippetLang = "curl" | "node" | "python";
 
 interface EndpointConfig {
   method: string;
@@ -27,10 +29,12 @@ interface HistoryEntry {
   status: number | null;
   response: string;
   timestamp: number;
+  durationMs: number | null;
 }
 
 const HISTORY_KEY = "ps_playground_history";
 const MAX_HISTORY = 20;
+const BASE_URL = "https://your-project.supabase.co/functions/v1";
 
 const endpoints: Record<EndpointKey, EndpointConfig> = {
   "agents-create": {
@@ -67,7 +71,74 @@ const endpoints: Record<EndpointKey, EndpointConfig> = {
   },
 };
 
-function ResponseBlock({ data, status }: { data: string; status: number | null }) {
+function generateSnippet(
+  lang: SnippetLang,
+  endpoint: EndpointKey,
+  config: EndpointConfig,
+  apiKey: string,
+  body: string,
+  queryValues: Record<string, string>
+): string {
+  const maskedKey = apiKey ? apiKey.slice(0, 12) + "..." : "ps_test_YOUR_KEY";
+  let url = `${BASE_URL}/${endpoint}`;
+  const qp = config.queryParams
+    ?.filter((p) => queryValues[p.name]?.trim())
+    .reduce((acc, p) => ({ ...acc, [p.name]: queryValues[p.name].trim() }), {} as Record<string, string>);
+  if (qp && Object.keys(qp).length > 0) {
+    url += "?" + new URLSearchParams(qp).toString();
+  }
+
+  if (lang === "curl") {
+    if (config.method === "GET") {
+      return `curl "${url}" \\\n  -H "X-API-KEY: ${maskedKey}"`;
+    }
+    return `curl -X POST "${url}" \\\n  -H "Content-Type: application/json" \\\n  -H "X-API-KEY: ${maskedKey}" \\\n  -d '${body}'`;
+  }
+
+  if (lang === "node") {
+    if (config.method === "GET") {
+      return `const response = await fetch("${url}", {
+  headers: { "X-API-KEY": "${maskedKey}" },
+});
+const data = await response.json();
+console.log(data);`;
+    }
+    return `const response = await fetch("${url}", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "X-API-KEY": "${maskedKey}",
+  },
+  body: JSON.stringify(${body}),
+});
+const data = await response.json();
+console.log(data);`;
+  }
+
+  // python
+  if (config.method === "GET") {
+    return `import requests
+
+response = requests.get(
+    "${url}",
+    headers={"X-API-KEY": "${maskedKey}"}
+)
+print(response.json())`;
+  }
+  return `import requests
+
+response = requests.post(
+    "${url}",
+    headers={
+        "Content-Type": "application/json",
+        "X-API-KEY": "${maskedKey}",
+    },
+    json=${body.replace(/"/g, '"')}
+)
+print(response.json())`;
+}
+
+function ResponseBlock({ data, status, durationMs }: { data: string; status: number | null; durationMs: number | null }) {
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
     navigator.clipboard.writeText(data);
@@ -78,9 +149,17 @@ function ResponseBlock({ data, status }: { data: string; status: number | null }
   return (
     <div className={`rounded-xl border overflow-hidden ${isError ? "border-destructive/50" : "border-border"}`}>
       <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-secondary/50 text-xs">
-        <span className={isError ? "text-destructive" : "text-muted-foreground"}>
-          {status ? `HTTP ${status}` : "Response"}
-        </span>
+        <div className="flex items-center gap-3">
+          <span className={isError ? "text-destructive" : "text-muted-foreground"}>
+            {status ? `HTTP ${status}` : "Response"}
+          </span>
+          {durationMs !== null && (
+            <span className="flex items-center gap-1 text-muted-foreground">
+              <Clock size={10} />
+              {durationMs < 1000 ? `${durationMs}ms` : `${(durationMs / 1000).toFixed(2)}s`}
+            </span>
+          )}
+        </div>
         <button onClick={handleCopy} className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
           {copied ? <Check size={14} /> : <Copy size={14} />}
           {copied ? "Copied" : "Copy"}
@@ -89,6 +168,63 @@ function ResponseBlock({ data, status }: { data: string; status: number | null }
       <pre className="p-4 text-sm font-mono text-foreground overflow-x-auto max-h-96 overflow-y-auto whitespace-pre-wrap">
         {data}
       </pre>
+    </div>
+  );
+}
+
+function SnippetPanel({
+  endpoint,
+  config,
+  apiKey,
+  body,
+  queryValues,
+}: {
+  endpoint: EndpointKey;
+  config: EndpointConfig;
+  apiKey: string;
+  body: string;
+  queryValues: Record<string, string>;
+}) {
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const handleCopy = (lang: SnippetLang) => {
+    const snippet = generateSnippet(lang, endpoint, config, apiKey, body, queryValues);
+    navigator.clipboard.writeText(snippet);
+    setCopied(lang);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  return (
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
+        <Code size={14} className="text-muted-foreground" />
+        <span className="text-sm font-medium">Save as Snippet</span>
+      </div>
+      <Tabs defaultValue="curl">
+        <div className="px-4 pt-3">
+          <TabsList className="h-8">
+            <TabsTrigger value="curl" className="text-xs px-3 h-7">cURL</TabsTrigger>
+            <TabsTrigger value="node" className="text-xs px-3 h-7">Node.js</TabsTrigger>
+            <TabsTrigger value="python" className="text-xs px-3 h-7">Python</TabsTrigger>
+          </TabsList>
+        </div>
+        {(["curl", "node", "python"] as SnippetLang[]).map((lang) => (
+          <TabsContent key={lang} value={lang} className="px-4 pb-4 mt-0">
+            <div className="relative">
+              <pre className="p-4 text-sm font-mono text-foreground bg-secondary/50 rounded-lg overflow-x-auto whitespace-pre-wrap mt-2">
+                {generateSnippet(lang, endpoint, config, apiKey, body, queryValues)}
+              </pre>
+              <button
+                onClick={() => handleCopy(lang)}
+                className="absolute top-4 right-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors bg-background/80 px-2 py-1 rounded"
+              >
+                {copied === lang ? <Check size={12} /> : <Copy size={12} />}
+                {copied === lang ? "Copied" : "Copy"}
+              </button>
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
     </div>
   );
 }
@@ -112,9 +248,11 @@ const ApiPlayground = () => {
   const [queryValues, setQueryValues] = useState<Record<string, string>>({});
   const [response, setResponse] = useState<string | null>(null);
   const [status, setStatus] = useState<number | null>(null);
+  const [durationMs, setDurationMs] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [showSnippet, setShowSnippet] = useState(false);
 
   useEffect(() => {
     setHistory(loadHistory());
@@ -129,6 +267,7 @@ const ApiPlayground = () => {
     setQueryValues({});
     setResponse(null);
     setStatus(null);
+    setDurationMs(null);
   };
 
   const addToHistory = (entry: Omit<HistoryEntry, "id" | "timestamp">) => {
@@ -148,6 +287,7 @@ const ApiPlayground = () => {
     setQueryValues(entry.queryValues);
     setResponse(null);
     setStatus(null);
+    setDurationMs(null);
     setShowHistory(false);
   };
 
@@ -160,11 +300,15 @@ const ApiPlayground = () => {
     if (!apiKey.trim()) {
       setResponse(JSON.stringify({ error: "Please enter your API key" }, null, 2));
       setStatus(400);
+      setDurationMs(null);
       return;
     }
     setLoading(true);
     setResponse(null);
     setStatus(null);
+    setDurationMs(null);
+
+    const startTime = performance.now();
 
     try {
       const headers: Record<string, string> = { "x-api-key": apiKey };
@@ -195,6 +339,9 @@ const ApiPlayground = () => {
 
       const { data, error } = await supabase.functions.invoke(functionName, invokeOptions);
 
+      const elapsed = Math.round(performance.now() - startTime);
+      setDurationMs(elapsed);
+
       let resStatus: number;
       let resBody: string;
 
@@ -216,8 +363,11 @@ const ApiPlayground = () => {
         queryValues,
         status: resStatus,
         response: resBody,
+        durationMs: elapsed,
       });
     } catch (err: any) {
+      const elapsed = Math.round(performance.now() - startTime);
+      setDurationMs(elapsed);
       const resBody = JSON.stringify({ error: err.message || "Request failed" }, null, 2);
       setStatus(500);
       setResponse(resBody);
@@ -228,6 +378,7 @@ const ApiPlayground = () => {
         queryValues,
         status: 500,
         response: resBody,
+        durationMs: elapsed,
       });
     } finally {
       setLoading(false);
@@ -248,19 +399,43 @@ const ApiPlayground = () => {
 
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-4xl font-semibold tracking-tight">API Playground</h1>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowHistory((v) => !v)}
-            className="gap-2"
-          >
-            <History size={14} />
-            History{history.length > 0 && ` (${history.length})`}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => { setShowSnippet((v) => !v); setShowHistory(false); }}
+              className="gap-2"
+            >
+              <Code size={14} />
+              Snippet
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => { setShowHistory((v) => !v); setShowSnippet(false); }}
+              className="gap-2"
+            >
+              <History size={14} />
+              History{history.length > 0 && ` (${history.length})`}
+            </Button>
+          </div>
         </div>
         <p className="text-muted-foreground mb-8">
           Test Paysmith API endpoints with your test API key. All requests hit the sandbox.
         </p>
+
+        {/* Snippet panel */}
+        {showSnippet && (
+          <div className="mb-8">
+            <SnippetPanel
+              endpoint={selected}
+              config={config}
+              apiKey={apiKey}
+              body={body}
+              queryValues={queryValues}
+            />
+          </div>
+        )}
 
         {/* History panel */}
         {showHistory && (
@@ -291,6 +466,12 @@ const ApiPlayground = () => {
                           {entry.status}
                         </span>
                         <span className="text-sm font-mono truncate">{entry.label}</span>
+                        {entry.durationMs !== null && (
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Clock size={10} />
+                            {entry.durationMs < 1000 ? `${entry.durationMs}ms` : `${(entry.durationMs / 1000).toFixed(2)}s`}
+                          </span>
+                        )}
                       </div>
                       <span className="text-xs text-muted-foreground">{formatTime(entry.timestamp)}</span>
                     </div>
@@ -381,7 +562,7 @@ const ApiPlayground = () => {
         {response && (
           <div className="mb-8">
             <h3 className="text-sm font-medium mb-2">Response</h3>
-            <ResponseBlock data={response} status={status} />
+            <ResponseBlock data={response} status={status} durationMs={durationMs} />
           </div>
         )}
       </div>
