@@ -9,18 +9,18 @@ const RATE_LIMIT = 100; // requests per minute per key
 const RATE_WINDOW = 60_000; // 60 seconds
 const rateBuckets = new Map<string, number[]>();
 
-function checkRateLimit(key: string): { allowed: boolean; retryAfter: number } {
+function checkRateLimit(key: string): { allowed: boolean; retryAfter: number; remaining: number; reset: number } {
   const now = Date.now();
   const timestamps = (rateBuckets.get(key) ?? []).filter(t => now - t < RATE_WINDOW);
+  const reset = timestamps.length > 0 ? Math.ceil((timestamps[0] + RATE_WINDOW - now) / 1000) : Math.ceil(RATE_WINDOW / 1000);
   if (timestamps.length >= RATE_LIMIT) {
-    const oldest = timestamps[0];
-    const retryAfter = Math.ceil((oldest + RATE_WINDOW - now) / 1000);
+    const retryAfter = Math.ceil((timestamps[0] + RATE_WINDOW - now) / 1000);
     rateBuckets.set(key, timestamps);
-    return { allowed: false, retryAfter };
+    return { allowed: false, retryAfter, remaining: 0, reset };
   }
   timestamps.push(now);
   rateBuckets.set(key, timestamps);
-  return { allowed: true, retryAfter: 0 };
+  return { allowed: true, retryAfter: 0, remaining: RATE_LIMIT - timestamps.length, reset };
 }
 
 // ── Multi-Rail Router ───────────────────────────────────────────────
@@ -182,10 +182,15 @@ Deno.serve(async (req) => {
 
     // Rate limit check
     const rl = checkRateLimit(apiKey);
+    const rlHeaders = {
+      "X-RateLimit-Limit": String(RATE_LIMIT),
+      "X-RateLimit-Remaining": String(rl.remaining),
+      "X-RateLimit-Reset": String(rl.reset),
+    };
     if (!rl.allowed) {
       return new Response(
         JSON.stringify({ error: `Rate limit exceeded. Try again in ${rl.retryAfter} seconds.`, retryAfter: rl.retryAfter }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": String(rl.retryAfter) } }
+        { status: 429, headers: { ...corsHeaders, ...rlHeaders, "Content-Type": "application/json", "Retry-After": String(rl.retryAfter) } }
       );
     }
 
@@ -379,7 +384,7 @@ Deno.serve(async (req) => {
         method,
         recipient: to,
       }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 200, headers: { ...corsHeaders, ...rlHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
     return new Response(JSON.stringify({ error: err.message }), {
