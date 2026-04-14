@@ -59,13 +59,13 @@ const DashboardLayout = () => {
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-sidebar-background border-r border-sidebar-border flex flex-col transition-transform duration-300 lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border flex flex-col transition-transform duration-300 lg:static lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between px-6 py-5 border-b border-sidebar-border">
-          <Link to="/" className="text-xl font-semibold tracking-widest text-sidebar-foreground">PAYSMITH</Link>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-sidebar-foreground">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-border">
+          <Link to="/" className="text-xl font-semibold tracking-widest text-foreground">PAYSMITH</Link>
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-foreground">
             <X size={20} />
           </button>
         </div>
@@ -80,8 +80,8 @@ const DashboardLayout = () => {
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                   active
-                    ? "bg-sidebar-accent text-sidebar-primary"
-                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                    ? "bg-secondary text-foreground font-medium"
+                    : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                 }`}
               >
                 <item.icon size={18} />
@@ -91,10 +91,10 @@ const DashboardLayout = () => {
           })}
         </nav>
 
-        <div className="px-3 py-4 border-t border-sidebar-border">
+        <div className="px-3 py-4 border-t border-border">
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground w-full transition-colors"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-secondary/50 hover:text-foreground w-full transition-colors"
           >
             <LogOut size={18} />
             Sign Out
