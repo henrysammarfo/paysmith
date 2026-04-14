@@ -21,6 +21,7 @@ import Wallets from "./pages/dashboard/Wallets";
 import ApiKeys from "./pages/dashboard/ApiKeys";
 import DashboardSettings from "./pages/dashboard/DashboardSettings";
 import Transactions from "./pages/dashboard/Transactions";
+import WebhookLogs from "./pages/dashboard/WebhookLogs";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
               <Route path="wallets" element={<Wallets />} />
               <Route path="transactions" element={<Transactions />} />
               <Route path="api-keys" element={<ApiKeys />} />
+              <Route path="webhook-logs" element={<WebhookLogs />} />
               <Route path="settings" element={<DashboardSettings />} />
             </Route>
             <Route path="*" element={<NotFound />} />

@@ -7,6 +7,7 @@ import {
   Wallet,
   ArrowUpDown,
   Key,
+  Webhook,
   Settings,
   LogOut,
   Menu,
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
   { label: "Wallets", path: "/dashboard/wallets", icon: Wallet },
   { label: "Transactions", path: "/dashboard/transactions", icon: ArrowUpDown },
   { label: "API Keys", path: "/dashboard/api-keys", icon: Key },
+  { label: "Webhook Logs", path: "/dashboard/webhook-logs", icon: Webhook },
   { label: "Settings", path: "/dashboard/settings", icon: Settings },
 ];
 
