@@ -1,19 +1,20 @@
 import { Link, useLocation } from "react-router-dom";
-import { ArrowLeft, Book, Code, Zap, Shield, Terminal, ChevronRight, Copy, Check, Server, Gauge } from "lucide-react";
+import { ArrowLeft, Book, Code, Zap, Shield, Terminal, ChevronRight, Copy, Check, Server, Gauge, Search, X } from "lucide-react";
 import Footer from "@/components/Footer";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { Input } from "@/components/ui/input";
 
 const sidebarSections = [
-  { id: "quickstart", label: "Quick Start", icon: Zap },
-  { id: "authentication", label: "Authentication", icon: Shield },
-  { id: "api-agents-create", label: "POST /agents-create", icon: Server },
-  { id: "api-agents-balance", label: "GET /agents-balance", icon: Server },
-  { id: "api-pay", label: "POST /pay", icon: Server },
-  { id: "multi-rail", label: "Multi-Rail Routing", icon: Book },
-  { id: "policies", label: "Policy Enforcement", icon: Shield },
-  { id: "webhooks", label: "Webhooks", icon: Code },
-  { id: "rate-limits", label: "Rate Limits", icon: Gauge },
-  { id: "errors", label: "Error Codes", icon: Shield },
+  { id: "quickstart", label: "Quick Start", icon: Zap, keywords: ["getting started", "base url", "prerequisites", "setup"] },
+  { id: "authentication", label: "Authentication", icon: Shield, keywords: ["api key", "x-api-key", "test", "live", "security", "header"] },
+  { id: "api-agents-create", label: "POST /agents-create", icon: Server, keywords: ["create wallet", "agent", "spending policy", "payment methods", "country", "currency"] },
+  { id: "api-agents-balance", label: "GET /agents-balance", icon: Server, keywords: ["balance", "wallet", "query", "list wallets"] },
+  { id: "api-pay", label: "POST /pay", icon: Server, keywords: ["payment", "send money", "mobile money", "bank transfer", "crypto", "recipient"] },
+  { id: "multi-rail", label: "Multi-Rail Routing", icon: Book, keywords: ["chimoney", "flutterwave", "sandbox", "provider", "routing", "fee"] },
+  { id: "policies", label: "Policy Enforcement", icon: Shield, keywords: ["spending policy", "daily limit", "max transaction", "approval"] },
+  { id: "webhooks", label: "Webhooks", icon: Code, keywords: ["webhook", "signature", "hmac", "event", "transaction.settled", "transaction.failed"] },
+  { id: "rate-limits", label: "Rate Limits", icon: Gauge, keywords: ["rate limit", "throttle", "429", "retry", "window"] },
+  { id: "errors", label: "Error Codes", icon: Shield, keywords: ["error", "status code", "400", "401", "403", "404", "500"] },
 ];
 
 function CodeBlock({ code, language = "typescript" }: { code: string; language?: string }) {
