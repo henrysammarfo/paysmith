@@ -49,7 +49,7 @@ const Overview = () => {
     setTotalVolume(wallets?.reduce((s, w) => s + Number(w.total_volume ?? 0), 0) ?? 0);
     setTotalTxns(wallets?.reduce((s, w) => s + Number(w.total_txns ?? 0), 0) ?? 0);
 
-    if (ids.length === 0) { setLoading(false); return; }
+    if (ids.length === 0) { setShowOnboarding(true); setLoading(false); return; }
 
     const { data: txns } = await supabase
       .from("transactions")
