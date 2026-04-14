@@ -134,9 +134,14 @@ const ApiUsageStats = () => {
         </div>
       )}
 
-      <h2 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-        <Gauge size={14} /> API Usage
-      </h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+          <Gauge size={14} /> API Usage
+        </h2>
+        <span className="text-[10px] text-muted-foreground/60">
+          Updated {lastRefreshed.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+        </span>
+      </div>
 
       {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
