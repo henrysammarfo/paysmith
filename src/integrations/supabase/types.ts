@@ -79,6 +79,41 @@ export type Database = {
           },
         ]
       }
+      api_call_logs: {
+        Row: {
+          created_at: string
+          developer_id: string
+          endpoint: string
+          id: string
+          method: string
+          status_code: number | null
+        }
+        Insert: {
+          created_at?: string
+          developer_id: string
+          endpoint: string
+          id?: string
+          method?: string
+          status_code?: number | null
+        }
+        Update: {
+          created_at?: string
+          developer_id?: string
+          endpoint?: string
+          id?: string
+          method?: string
+          status_code?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_call_logs_developer_id_fkey"
+            columns: ["developer_id"]
+            isOneToOne: false
+            referencedRelation: "developers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       developers: {
         Row: {
           auth_id: string
