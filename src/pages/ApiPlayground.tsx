@@ -418,6 +418,24 @@ const ApiPlayground = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Production banner */}
+      {env === "production" && (
+        <div className="sticky top-0 z-50 bg-destructive/10 border-b border-destructive/30 px-4 py-2.5">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm">
+              <AlertTriangle size={14} className="text-destructive shrink-0" />
+              <span className="font-medium text-destructive">Production Mode</span>
+              <span className="text-muted-foreground hidden sm:inline">— Requests use your live API key and may process real payments.</span>
+            </div>
+            <button
+              onClick={() => setEnv("sandbox")}
+              className="text-xs font-medium text-destructive hover:text-destructive/80 transition-colors underline underline-offset-2"
+            >
+              Switch to Sandbox
+            </button>
+          </div>
+        </div>
+      )}
       <div className="max-w-4xl mx-auto px-4 sm:px-8 py-8 sm:py-12">
         <Link to="/docs" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
           <ArrowLeft size={16} /> Back to Docs
