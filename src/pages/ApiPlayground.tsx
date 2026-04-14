@@ -446,8 +446,31 @@ const ApiPlayground = () => {
           </div>
         </div>
         <p className="text-muted-foreground mb-8">
-          Test Paysmith API endpoints with your test API key. All requests hit the sandbox.
+          Test Paysmith API endpoints with your API key. Switch environments to test sandbox or production.
         </p>
+
+        {/* Environment selector */}
+        <div className="mb-6 flex items-center gap-3">
+          <span className="text-sm font-medium">Environment</span>
+          <div className="flex rounded-lg border border-border overflow-hidden">
+            {(["sandbox", "production"] as Environment[]).map((e) => (
+              <button
+                key={e}
+                onClick={() => setEnv(e)}
+                className={`px-4 py-1.5 text-sm transition-colors ${
+                  env === e
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {ENV_CONFIG[e].label}
+              </button>
+            ))}
+          </div>
+          <span className={`text-xs font-medium px-2 py-0.5 rounded ${envConfig.badgeClass}`}>
+            {envConfig.badge}
+          </span>
+        </div>
 
         {/* Snippet panel */}
         {showSnippet && (
@@ -458,6 +481,7 @@ const ApiPlayground = () => {
               apiKey={apiKey}
               body={body}
               queryValues={queryValues}
+              env={env}
             />
           </div>
         )}
