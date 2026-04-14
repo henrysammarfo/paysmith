@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, Play, Loader2, Copy, Check, History, RotateCcw, Trash2, Code, Clock } from "lucide-react";
+import { ArrowLeft, Play, Loader2, Copy, Check, History, RotateCcw, Trash2, Code, Clock, AlertTriangle } from "lucide-react";
 import Footer from "@/components/Footer";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 
 type EndpointKey = "agents-create" | "agents-balance" | "pay";
@@ -276,7 +277,7 @@ const ApiPlayground = () => {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [showSnippet, setShowSnippet] = useState(false);
-
+  const [showProdConfirm, setShowProdConfirm] = useState(false);
   const envConfig = ENV_CONFIG[env];
 
   useEffect(() => {
@@ -456,7 +457,13 @@ const ApiPlayground = () => {
             {(["sandbox", "production"] as Environment[]).map((e) => (
               <button
                 key={e}
-                onClick={() => setEnv(e)}
+                onClick={() => {
+                  if (e === "production" && env !== "production") {
+                    setShowProdConfirm(true);
+                  } else {
+                    setEnv(e);
+                  }
+                }}
                 className={`px-4 py-1.5 text-sm transition-colors ${
                   env === e
                     ? "bg-primary text-primary-foreground"
