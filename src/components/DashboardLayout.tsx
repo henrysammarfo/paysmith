@@ -14,6 +14,7 @@ import {
   X,
   ChevronsLeft,
   ChevronsRight,
+  BarChart3,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { label: "Transactions", path: "/dashboard/transactions", icon: ArrowUpDown },
   { label: "API Keys", path: "/dashboard/api-keys", icon: Key },
   { label: "Webhook Logs", path: "/dashboard/webhook-logs", icon: Webhook },
+  { label: "Metrics", path: "/dashboard/metrics", icon: BarChart3 },
   { label: "Settings", path: "/dashboard/settings", icon: Settings },
 ];
 
