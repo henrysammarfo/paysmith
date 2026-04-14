@@ -198,17 +198,19 @@ function SnippetPanel({
   apiKey,
   body,
   queryValues,
+  env,
 }: {
   endpoint: EndpointKey;
   config: EndpointConfig;
   apiKey: string;
   body: string;
   queryValues: Record<string, string>;
+  env: Environment;
 }) {
   const [copied, setCopied] = useState<string | null>(null);
 
   const handleCopy = (lang: SnippetLang) => {
-    const snippet = generateSnippet(lang, endpoint, config, apiKey, body, queryValues);
+    const snippet = generateSnippet(lang, endpoint, config, apiKey, body, queryValues, env);
     navigator.clipboard.writeText(snippet);
     setCopied(lang);
     setTimeout(() => setCopied(null), 2000);
@@ -232,7 +234,7 @@ function SnippetPanel({
           <TabsContent key={lang} value={lang} className="px-4 pb-4 mt-0">
             <div className="relative">
               <pre className="p-4 text-sm font-mono text-foreground bg-secondary/50 rounded-lg overflow-x-auto whitespace-pre-wrap mt-2">
-                {generateSnippet(lang, endpoint, config, apiKey, body, queryValues)}
+                {generateSnippet(lang, endpoint, config, apiKey, body, queryValues, env)}
               </pre>
               <button
                 onClick={() => handleCopy(lang)}
