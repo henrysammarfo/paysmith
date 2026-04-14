@@ -544,7 +544,7 @@ const ApiPlayground = () => {
           <label className="text-sm font-medium mb-2 block">API Key</label>
           <Input
             type="password"
-            placeholder="ps_test_..."
+            placeholder={`${envConfig.keyPrefix}...`}
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             className="font-mono max-w-md"
