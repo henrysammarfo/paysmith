@@ -1,4 +1,4 @@
-import { Play, Star } from "lucide-react";
+import { Play } from "lucide-react";
 
 const CtaSection = () => {
   return (
