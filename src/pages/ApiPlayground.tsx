@@ -124,22 +124,16 @@ const ApiPlayground = () => {
         }
       }
 
-      // Build query params
-      const qp = config.queryParams
-        ?.filter((p) => queryValues[p.name]?.trim())
-        .reduce((acc, p) => ({ ...acc, [p.name]: queryValues[p.name].trim() }), {} as Record<string, string>);
+      // Build the function name and query params separately
+      let functionName = selected as string;
+      const invokeOptions: any = { method: config.method as any, ...options };
 
-      // Build the path with query params
-      let path = selected;
       if (qp && Object.keys(qp).length > 0) {
         const search = new URLSearchParams(qp).toString();
-        path = `${selected}?${search}`;
+        functionName = `${selected}?${search}`;
       }
 
-      const { data, error } = await supabase.functions.invoke(path, {
-        method: config.method as any,
-        ...options,
-      });
+      const { data, error } = await supabase.functions.invoke(functionName, invokeOptions);
 
       if (error) {
         setStatus(error.message?.includes("429") ? 429 : 400);

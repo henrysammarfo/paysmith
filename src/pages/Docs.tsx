@@ -69,8 +69,20 @@ const BASE_URL = "https://your-project.supabase.co/functions/v1";
 
 const Docs = () => {
   const [activeSection, setActiveSection] = useState("quickstart");
+  const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const filteredSections = useMemo(() => {
+    if (!searchQuery.trim()) return sidebarSections;
+    const q = searchQuery.toLowerCase();
+    return sidebarSections.filter(
+      (s) =>
+        s.label.toLowerCase().includes(q) ||
+        s.id.toLowerCase().includes(q) ||
+        s.keywords.some((k) => k.includes(q))
+    );
+  }, [searchQuery]);
 
   useEffect(() => {
     const hash = location.hash.replace("#", "");
@@ -93,9 +105,26 @@ const Docs = () => {
           <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
             <ArrowLeft size={16} /> Back
           </Link>
-          <h2 className="text-lg font-semibold mb-4">API Reference</h2>
+          <h2 className="text-lg font-semibold mb-3">API Reference</h2>
+          
+          {/* Search */}
+          <div className="relative mb-4">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search docs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 h-8 text-xs"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                <X size={12} />
+              </button>
+            )}
+          </div>
+
           <nav className="space-y-1">
-            {sidebarSections.map((s) => (
+            {filteredSections.map((s) => (
               <button
                 key={s.id}
                 onClick={() => scrollToSection(s.id)}
@@ -109,7 +138,20 @@ const Docs = () => {
                 {s.label}
               </button>
             ))}
+            {filteredSections.length === 0 && (
+              <p className="text-xs text-muted-foreground px-3 py-2">No matching sections</p>
+            )}
           </nav>
+
+          {/* Playground link */}
+          <div className="mt-6 pt-4 border-t border-border">
+            <Link
+              to="/playground"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-primary hover:bg-primary/10 transition-colors font-medium"
+            >
+              <Terminal size={14} /> API Playground
+            </Link>
+          </div>
         </aside>
 
         {/* Main content */}
