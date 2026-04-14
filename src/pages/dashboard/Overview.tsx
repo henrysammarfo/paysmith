@@ -6,6 +6,7 @@ import {
 } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import OnboardingWizard from "@/components/OnboardingWizard";
 
 interface DailyStat {
   date: string;
