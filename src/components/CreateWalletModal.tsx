@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { analytics, EVENTS } from "@/lib/posthog";
 
 interface Props {
   open: boolean;
@@ -90,6 +91,7 @@ const CreateWalletModal = ({ open, onOpenChange, onCreated }: Props) => {
         toast.error(result.error || "Failed to create wallet");
       } else {
         toast.success("Wallet created!");
+        analytics.track(EVENTS.WALLET_CREATED, { country, currency: selectedCountry.currency });
         onCreated();
         onOpenChange(false);
         setName("");

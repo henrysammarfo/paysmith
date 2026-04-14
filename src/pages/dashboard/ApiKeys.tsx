@@ -118,6 +118,7 @@ const ApiKeys = () => {
       toast.success(`${newKeyName} key created!`, {
         description: "Your new API key is ready to use.",
       });
+      (await import("@/lib/posthog")).analytics.track((await import("@/lib/posthog")).EVENTS.API_KEY_CREATED, { environment: newKeyEnv });
       setNewKeyOpen(false);
       setNewKeyName("");
       setNewKeyEnv("live");
@@ -160,6 +161,7 @@ const ApiKeys = () => {
       toast.success("Webhook configured!", {
         description: "Your endpoint will receive events.",
       });
+      (await import("@/lib/posthog")).analytics.track((await import("@/lib/posthog")).EVENTS.WEBHOOK_CONFIGURED);
       setWebhookOpen(false);
       setWebhookUrl("");
       setSelectedEvents([]);

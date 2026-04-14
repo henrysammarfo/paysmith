@@ -77,6 +77,7 @@ const DashboardSettings = () => {
       toast.error(error.message);
     } else {
       toast.success("Webhook settings saved!");
+      (await import("@/lib/posthog")).analytics.track((await import("@/lib/posthog")).EVENTS.WEBHOOK_CONFIGURED);
     }
     setWebhookLoading(false);
   };
