@@ -96,11 +96,11 @@ const DashboardSettings = () => {
     "w-full rounded-xl bg-secondary/50 border border-border px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring";
 
   return (
-    <div className="space-y-8 max-w-2xl">
-      <h1 className="text-2xl font-semibold">Settings</h1>
+    <div className="space-y-6 sm:space-y-8 max-w-2xl">
+      <h1 className="text-xl sm:text-2xl font-semibold">Settings</h1>
 
       {/* Profile */}
-      <div className="rounded-xl border border-border bg-card p-6">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
         <h2 className="text-lg font-medium mb-6">Profile</h2>
         <form onSubmit={handleSave} className="space-y-5">
           <div className="flex items-center gap-4 mb-6">
@@ -145,7 +145,7 @@ const DashboardSettings = () => {
       </div>
 
       {/* Webhook Settings */}
-      <div className="rounded-xl border border-border bg-card p-6">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
         <h2 className="text-lg font-medium mb-2">Webhook Settings</h2>
         <p className="text-sm text-muted-foreground mb-6">
           Configure a webhook URL to receive real-time notifications when transactions settle or fail.

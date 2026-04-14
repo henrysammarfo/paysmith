@@ -76,14 +76,14 @@ const Wallets = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Wallets</h1>
+        <h1 className="text-xl sm:text-2xl font-semibold">Wallets</h1>
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 bg-primary text-primary-foreground rounded-xl px-4 py-2 text-sm font-medium hover:bg-primary/80 transition-colors"
+          className="flex items-center gap-2 bg-primary text-primary-foreground rounded-xl px-3 sm:px-4 py-2 text-sm font-medium hover:bg-primary/80 transition-colors"
         >
-          <Plus size={16} /> New Wallet
+          <Plus size={16} /> <span className="hidden sm:inline">New</span> Wallet
         </button>
       </div>
 
@@ -102,7 +102,7 @@ const Wallets = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {wallets.map((w) => (
-            <div key={w.id} className="rounded-xl border border-border bg-card p-5 space-y-4">
+            <div key={w.id} className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3 sm:space-y-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">

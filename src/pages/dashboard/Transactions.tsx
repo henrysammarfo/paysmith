@@ -119,8 +119,8 @@ const Transactions = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Transactions</h1>
+    <div className="space-y-4 sm:space-y-6">
+      <h1 className="text-xl sm:text-2xl font-semibold">Transactions</h1>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
@@ -168,7 +168,7 @@ const Transactions = () => {
           </p>
         </div>
       ) : (
-        <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="rounded-xl border border-border bg-card overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
