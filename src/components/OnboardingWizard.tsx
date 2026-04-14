@@ -591,7 +591,7 @@ const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
                       </div>
 
                       <button
-                        onClick={() => markStepComplete(1)}
+                        onClick={() => { analytics.track(EVENTS.API_KEY_CREATED, { source: "onboarding" }); markStepComplete(1); }}
                         className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
                       >
                         <Check size={14} /> I've Copied My Keys
