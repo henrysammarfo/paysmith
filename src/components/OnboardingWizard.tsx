@@ -384,7 +384,7 @@ const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
                   )}
 
                   {index === 1 && (
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <p className="text-xs text-muted-foreground">Your API keys were auto-generated. Copy them to integrate Paysmith.</p>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between rounded-lg border border-input bg-secondary/30 px-3 py-2">
@@ -416,6 +416,16 @@ const OnboardingWizard = ({ onComplete }: OnboardingWizardProps) => {
                           </div>
                         </div>
                       </div>
+
+                      {/* Interactive code snippets */}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Code size={14} className="text-primary" />
+                          <p className="text-xs font-medium">Make a test payment</p>
+                        </div>
+                        <SnippetTabs testKey={testKey} walletId={createdWallet?.walletId || createdWallet?.id} />
+                      </div>
+
                       <button
                         onClick={() => markStepComplete(1)}
                         className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
