@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { Activity, Zap, TrendingUp, AlertTriangle, X } from "lucide-react";
+import { Activity, Gauge, TrendingUp, AlertTriangle, X } from "lucide-react";
 
 interface DailyApiCall {
   date: string;
