@@ -10,10 +10,7 @@ import AdminRoute from "@/components/AdminRoute";
 import DashboardLayout from "@/components/DashboardLayout";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
+import WaitlistGate from "./pages/WaitlistGate";
 import Pricing from "./pages/Pricing";
 import Docs from "./pages/Docs";
 import ApiPlayground from "./pages/ApiPlayground";
@@ -40,10 +37,10 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/login" element={<WaitlistGate />} />
+            <Route path="/signup" element={<WaitlistGate />} />
+            <Route path="/forgot-password" element={<WaitlistGate />} />
+            <Route path="/reset-password" element={<WaitlistGate />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/docs" element={<Docs />} />
             <Route path="/playground" element={<ApiPlayground />} />

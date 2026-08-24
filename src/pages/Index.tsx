@@ -13,7 +13,6 @@ import {
   X,
   Clock,
   Calendar,
-  Play,
   ArrowRight,
 } from "lucide-react";
 
@@ -181,12 +180,11 @@ const Index = () => {
                 style={{ transitionDelay: menuOpen ? "600ms" : "0ms" }}
               >
                 <Link
-                  to="/signup"
+                  to="/#waitlist"
                   className="flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-full font-medium px-8 py-3"
                   onClick={() => setMenuOpen(false)}
                 >
-                  <Play size={18} className="fill-primary-foreground" />
-                  Get Started
+                  Join waitlist
                 </Link>
               </div>
             </div>
@@ -229,14 +227,13 @@ const Index = () => {
 
                 {/* CTA */}
                 <div className="flex flex-wrap gap-3 sm:gap-4">
-                  <Link
-                    to="/signup"
+                  <a
+                    href="#waitlist"
                     className="animate-blur-fade-up flex items-center gap-2 bg-primary text-primary-foreground rounded-full font-medium px-6 sm:px-8 py-2.5 sm:py-3 hover:bg-primary/80 transition-colors text-sm sm:text-base"
                     style={{ animationDelay: "600ms" }}
                   >
-                    <Play size={16} className="fill-primary-foreground" />
-                    Get Started
-                  </Link>
+                    Join waitlist
+                  </a>
                   <Link
                     to="/docs"
                     className="animate-blur-fade-up landing-btn-ghost flex items-center gap-2 rounded-full font-medium liquid-glass px-6 sm:px-8 py-2.5 sm:py-3 text-sm sm:text-base"

@@ -189,7 +189,7 @@ const Docs = () => {
               <CodeBlock code={BASE_URL} language="plaintext" />
               <h3 className="font-medium flex items-center gap-2"><Shield size={16} /> Prerequisites</h3>
               <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                <li>A Paysmith account — <Link to="/signup" className="text-primary hover:underline">sign up here</Link></li>
+                <li>Join the <a href="/#waitlist" className="text-primary hover:underline">builder waitlist</a> for sandbox API access</li>
                 <li>A Test API key from the dashboard (<code className="text-xs bg-secondary/50 px-1 rounded">ps_test_…</code>)</li>
               </ul>
               <h3 className="font-medium flex items-center gap-2 mt-4"><Terminal size={16} /> Three calls</h3>

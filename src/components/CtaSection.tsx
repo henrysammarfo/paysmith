@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Play } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -18,6 +18,28 @@ const CORRIDORS = [
   { value: "ZA", label: "South Africa" },
 ] as const;
 
+async function joinWaitlistApi(body: {
+  email: string;
+  corridor: string;
+  source: string;
+}) {
+  const base = import.meta.env.VITE_SUPABASE_URL as string;
+  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+  const res = await fetch(`${base}/functions/v1/waitlist-join`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${key}`,
+    },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error ?? "Could not join waitlist");
+  }
+  return data as { ok: boolean; duplicate?: boolean; emailSent?: boolean };
+}
+
 const CtaSection = () => {
   const [email, setEmail] = useState("");
   const [corridor, setCorridor] = useState("GH");
@@ -27,23 +49,31 @@ const CtaSection = () => {
     e.preventDefault();
     if (!email.trim()) return;
     setLoading(true);
-    const { error } = await supabase.from("waitlist_signups").insert({
-      email: email.trim().toLowerCase(),
-      role: "builder",
-      corridor,
-      source: "landing_cta",
-    });
-    setLoading(false);
-    if (error) {
-      if (error.code === "23505") {
-        toast.info("You're already on the waitlist.");
+    try {
+      const result = await joinWaitlistApi({
+        email: email.trim().toLowerCase(),
+        corridor,
+        source: "landing_cta",
+      });
+      if (result.duplicate) {
+        toast.info(
+          result.emailSent
+            ? "You're already on the waitlist — check your inbox."
+            : "You're already on the waitlist.",
+        );
       } else {
-        toast.error("Could not join waitlist. Try again.");
+        toast.success(
+          result.emailSent
+            ? "You're on the list — check your email for confirmation."
+            : "You're on the builder waitlist — we'll reach out soon.",
+        );
       }
-      return;
+      setEmail("");
+    } catch {
+      toast.error("Could not join waitlist. Try again.");
+    } finally {
+      setLoading(false);
     }
-    toast.success("You're on the builder waitlist — we'll reach out.");
-    setEmail("");
   };
 
   return (
@@ -108,17 +138,17 @@ const CtaSection = () => {
         </form>
 
         <div className="flex items-center justify-center gap-4 flex-wrap">
-          <Link
-            to="/signup"
-            className="flex items-center gap-2 bg-primary text-primary-foreground rounded-full font-medium px-8 py-3 hover:bg-primary/80 transition-colors"
+          <a
+            href="#waitlist"
+            className="flex items-center gap-2 bg-primary text-primary-foreground rounded-full font-medium px-8 py-3 hover:bg-primary/80 transition-colors scroll-smooth"
           >
-            <Play size={18} className="fill-primary-foreground" />
-            Get Started Free
-          </Link>
+            Join waitlist
+          </a>
           <Link
             to="/docs"
             className="landing-btn-ghost flex items-center gap-2 rounded-full font-medium liquid-glass px-8 py-3"
           >
+            <BookOpen size={18} />
             Read the Docs
           </Link>
         </div>

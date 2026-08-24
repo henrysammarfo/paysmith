@@ -16,6 +16,6 @@ npx supabase functions deploy agents-balance --project-ref $REF --no-verify-jwt
 npx supabase functions deploy webhook-deliver --project-ref $REF
 npx supabase functions deploy reconcile-ledger --project-ref $REF --no-verify-jwt
 npx supabase functions deploy partna-quote --project-ref $REF --no-verify-jwt
-npx supabase functions deploy track-api-call --project-ref $REF
+npx supabase functions deploy waitlist-join --project-ref $REF --no-verify-jwt
 npx supabase secrets list --project-ref $REF
 npx supabase functions list --project-ref $REF
