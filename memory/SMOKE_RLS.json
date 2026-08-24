@@ -1,0 +1,36 @@
+{
+  "at": "2026-08-23T16:26:36.399Z",
+  "victimWalletId": "8c88c347-3947-4fdb-8f79-44eb7308aa55",
+  "results": [
+    {
+      "name": "cross_tenant_select_empty",
+      "pass": true,
+      "status": 200,
+      "rows": 0
+    },
+    {
+      "name": "cross_tenant_update_blocked",
+      "pass": true,
+      "status": 200,
+      "returnedRows": 0,
+      "balance_after": 777
+    },
+    {
+      "name": "cross_tenant_txn_insert_blocked",
+      "pass": true,
+      "status": 403,
+      "body": "{\"code\":\"42501\",\"details\":null,\"hint\":null,\"message\":\"new row violates row-level security policy for table \\\"transactions\\\"\"}"
+    },
+    {
+      "name": "cross_tenant_delete_blocked",
+      "pass": true,
+      "status": 200,
+      "still_exists": true
+    },
+    {
+      "name": "owner_select_own_wallet",
+      "pass": true,
+      "rows": 1
+    }
+  ]
+}

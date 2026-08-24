@@ -1,0 +1,18 @@
+{
+  "at": "2026-08-24T09:55:50.188Z",
+  "status": 200,
+  "body": {
+    "txId": "44e93f65-bf89-45f2-9a53-d7d11090214e",
+    "status": "pending",
+    "provider": "mtn_momo",
+    "settledAt": null,
+    "fee": "0.01 GHS",
+    "amount": 1,
+    "currency": "GHS",
+    "method": "mobile_money",
+    "recipient": "46733123450",
+    "stellarTxHash": null,
+    "policyEnforcement": "soroban+off-chain",
+    "sorobanPolicyContractId": "CAHFJKHA7O75475ZI4Y4C6W6PIAR5MZUSNDKPNKADJ7KEHR7XNSTGMBE"
+  }
+}

@@ -211,7 +211,7 @@ const WalletCreationSnippets = ({ testKey }: { testKey: string }) => {
 );
 
 const wallet = await response.json();
-console.log(wallet.walletId, wallet.apiKey);`,
+console.log(wallet.walletId);`,
     python: `import requests
 
 response = requests.post(
@@ -234,7 +234,7 @@ response = requests.post(
 )
 
 wallet = response.json()
-print(wallet["walletId"], wallet["apiKey"])`,
+print(wallet["walletId"])`,
   };
 
   const tabs: { id: SnippetLang; label: string }[] = [

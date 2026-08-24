@@ -174,15 +174,14 @@ We believe AI agents deserve their own financial infrastructure — one that's b
 - **Agent Wallets** — Dedicated wallets with per-agent spending policies and audit trails.
 - **Multi-Rail Routing** — Automatic routing across mobile money, bank transfers, and card networks.
 - **Policy Enforcement** — Built-in transaction limits, approval workflows, and compliance checks.
-- **Developer-First SDK** — A clean, typed API that makes integration a breeze.
+- **REST API** — Create wallet → pay → balance with real Edge endpoints (fetch/curl; npm SDK optional).
+- **Stellar testnet** — Settle XLM and Circle USDC with explorer hashes before live KYB.
 
 ## What's Next
 
-We're currently in private beta with select partners in Ghana and Kenya. If you're building AI agents that handle payments, we'd love to talk.
+Paysmith is open as a **sandbox & Stellar testnet** platform for Africa AI agent builders (hackathons, chapter demos, SCF prep). Join the waitlist for beta API access, or email hello@paysmith.dev.
 
-Sign up for early access on our website, or reach out directly at hello@paysmith.dev.
-
-Let's build the future of AI commerce together.
+Live corridors ship after KYB — testnet stays free.
     `,
   },
 ];

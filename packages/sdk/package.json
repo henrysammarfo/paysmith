@@ -1,0 +1,29 @@
+{
+  "name": "@paysmithhq/sdk",
+  "version": "0.2.0",
+  "description": "Official TypeScript client for the Paysmith agent payments API (Africa MoMo + Stellar).",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["paysmith", "stellar", "mobile-money", "ai-agents", "payments", "africa"],
+  "license": "MIT",
+  "homepage": "https://www.npmjs.com/package/@paysmithhq/sdk",
+  "engines": { "node": ">=18" },
+  "publishConfig": { "access": "public" },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

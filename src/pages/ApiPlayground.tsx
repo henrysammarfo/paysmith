@@ -38,17 +38,22 @@ const MAX_HISTORY = 20;
 
 type Environment = "sandbox" | "production";
 
+const supabaseUrl =
+  (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/$/, "") ||
+  "https://hkngxtrqhnkzkbqgqbjk.supabase.co";
+const LIVE_BASE = `${supabaseUrl}/functions/v1`;
+
 const ENV_CONFIG: Record<Environment, { label: string; baseUrl: string; keyPrefix: string; badge: string; badgeClass: string }> = {
   sandbox: {
     label: "Sandbox",
-    baseUrl: "https://your-project.supabase.co/functions/v1",
+    baseUrl: LIVE_BASE,
     keyPrefix: "ps_test_",
     badge: "Test Mode",
     badgeClass: "bg-accent text-accent-foreground",
   },
   production: {
-    label: "Production",
-    baseUrl: "https://your-project.supabase.co/functions/v1",
+    label: "Production (live KYB)",
+    baseUrl: LIVE_BASE,
     keyPrefix: "ps_live_",
     badge: "Live Mode",
     badgeClass: "bg-destructive/20 text-destructive",
@@ -62,8 +67,8 @@ const endpoints: Record<EndpointKey, EndpointConfig> = {
     description: "Create a new agent wallet with spending policies.",
     defaultBody: JSON.stringify({
       name: "Test Bot",
-      country: "NG",
-      currency: "NGN",
+      country: "GH",
+      currency: "GHS",
       paymentMethods: ["mobile_money"],
       spendingPolicy: { dailyLimit: 10000, maxSingleTx: 2000 },
     }, null, 2),
@@ -73,19 +78,20 @@ const endpoints: Record<EndpointKey, EndpointConfig> = {
     label: "GET /agents-balance",
     description: "Retrieve balances for one or all wallets.",
     defaultBody: "",
-    queryParams: [{ name: "walletId", placeholder: "ps_agent_... (optional)" }],
+    queryParams: [{ name: "walletId", placeholder: "uuid (optional)" }],
   },
   pay: {
     method: "POST",
     label: "POST /pay",
     description: "Send a payment from an agent wallet.",
     defaultBody: JSON.stringify({
-      walletId: "ps_agent_...",
-      to: "+2348012345678",
-      amount: 500,
-      currency: "NGN",
+      walletId: "00000000-0000-0000-0000-000000000000",
+      to: "0551234987",
+      amount: 1,
+      currency: "GHS",
       method: "mobile_money",
-      note: "Test payment",
+      bankCode: "MTN",
+      note: "Sandbox payment",
     }, null, 2),
   },
 };

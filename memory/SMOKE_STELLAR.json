@@ -1,0 +1,75 @@
+{
+  "summary": {
+    "http_ok": true,
+    "provider_stellar": true,
+    "status_settled": true,
+    "hash": "26babf8d4c41075d988cfe0c9a4c2eb4d18cc360bd9bff3657b19c4078d5feb4",
+    "ledger_debited": true,
+    "verdict": "PASS"
+  },
+  "steps": [
+    {
+      "name": "treasury",
+      "data": [
+        "credit_alphanum4:18.0000000",
+        "native:9998.0962039"
+      ],
+      "at": "2026-08-24T06:42:37.352Z"
+    },
+    {
+      "name": "destination",
+      "data": {
+        "public": "GBNEWU435OKWHFO55AJBSMDS2W376UYZNC436SAWCZ5B7Y5H2N4FVHTE"
+      },
+      "at": "2026-08-24T06:42:45.318Z"
+    },
+    {
+      "name": "ledger_funded",
+      "data": {
+        "id": "1c7173b2-34f5-4419-adba-3600ea60ef13",
+        "balance_xlm": 10
+      },
+      "at": "2026-08-24T06:42:46.851Z"
+    },
+    {
+      "name": "pay_response",
+      "data": {
+        "status": 200,
+        "body": "{\"txId\":\"26babf8d4c41075d988cfe0c9a4c2eb4d18cc360bd9bff3657b19c4078d5feb4\",\"status\":\"settled\",\"provider\":\"stellar\",\"settledAt\":\"2026-08-24T06:42:57.234Z\",\"fee\":\"0.00 XLM\",\"amount\":0.5,\"currency\":\"XLM\",\"method\":\"crypto\",\"recipient\":\"GBNEWU435OKWHFO55AJBSMDS2W376UYZNC436SAWCZ5B7Y5H2N4FVHTE\",\"stellarTxHash\":\"26babf8d4c41075d988cfe0c9a4c2eb4d18cc360bd9bff3657b19c4078d5feb4\",\"policyEnforcement\":\"soroban-recorded+off-chain\",\"sorobanPolicyContractId\":\"CAHFJKHA7O75475ZI4Y4C6W6PIAR5MZUSNDKPNKADJ7KEHR7XNSTGMBE\"}"
+      },
+      "at": "2026-08-24T06:42:54.455Z"
+    },
+    {
+      "name": "explorer",
+      "data": "https://stellar.expert/explorer/testnet/tx/26babf8d4c41075d988cfe0c9a4c2eb4d18cc360bd9bff3657b19c4078d5feb4",
+      "at": "2026-08-24T06:42:54.455Z"
+    },
+    {
+      "name": "horizon_tx",
+      "data": {
+        "status": 200,
+        "ok": true
+      },
+      "at": "2026-08-24T06:42:55.364Z"
+    },
+    {
+      "name": "ledger_after",
+      "data": {
+        "balance_xlm": 9.5
+      },
+      "at": "2026-08-24T06:42:55.553Z"
+    },
+    {
+      "name": "summary",
+      "data": {
+        "http_ok": true,
+        "provider_stellar": true,
+        "status_settled": true,
+        "hash": "26babf8d4c41075d988cfe0c9a4c2eb4d18cc360bd9bff3657b19c4078d5feb4",
+        "ledger_debited": true,
+        "verdict": "PASS"
+      },
+      "at": "2026-08-24T06:42:55.553Z"
+    }
+  ]
+}

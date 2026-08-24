@@ -1,0 +1,23 @@
+{
+  "at": "2026-08-23T16:26:46.018Z",
+  "userId": "5569f6c9-0c41-47fe-be2f-8b442f62fccd",
+  "logs": [
+    {
+      "action": "insert",
+      "new_role": "admin",
+      "old_role": null,
+      "target_user_id": "5569f6c9-0c41-47fe-be2f-8b442f62fccd"
+    },
+    {
+      "action": "insert",
+      "new_role": "user",
+      "old_role": null,
+      "target_user_id": "5569f6c9-0c41-47fe-be2f-8b442f62fccd"
+    }
+  ],
+  "checks": {
+    "log_exists": true,
+    "admin_insert_logged": true,
+    "user_insert_logged": true
+  }
+}

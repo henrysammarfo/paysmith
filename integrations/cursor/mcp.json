@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "paysmith": {
+      "command": "npx",
+      "args": ["-y", "@paysmithhq/mcp@0.2.3"],
+      "env": {
+        "PAYSMITH_BASE_URL": "https://hkngxtrqhnkzkbqgqbjk.supabase.co/functions/v1"
+      }
+    }
+  }
+}

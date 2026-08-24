@@ -1,0 +1,59 @@
+{
+  "summary": {
+    "fw_direct_ok": true,
+    "pay_ok": true,
+    "provider_flutterwave": true,
+    "ledger_debited": true,
+    "ip_whitelist_blocked": false,
+    "failover_path_hit": true,
+    "verdict": "PASS",
+    "fw_message": "Transfer Queued Successfully"
+  },
+  "steps": [
+    {
+      "name": "flutterwave_direct",
+      "data": {
+        "status": 200,
+        "body": "{\"status\":\"success\",\"message\":\"Transfer Queued Successfully\",\"data\":{\"id\":2223816,\"account_number\":\"0690000032\",\"bank_code\":\"044\",\"full_name\":\"Pastor Bright\",\"created_at\":\"2026-08-23T16:26:53.000Z\",\"currency\":\"NGN\",\"amount\":100,\"fee\":10.75,\"status\":\"NEW\",\"reference\":\"ps_direct_1787502412292_PMCK\",\"meta\":null,\"narration\":\"Paysmith direct FW smoke\",\"complete_message\":\"\",\"requires_approval\":0,\"is_approved\":1,\"bank_name\":\"ACCESS BANK NIGERIA\"}}"
+      },
+      "at": "2026-08-23T16:26:53.054Z"
+    },
+    {
+      "name": "ledger_funded",
+      "data": {
+        "id": "1c7173b2-34f5-4419-adba-3600ea60ef13",
+        "balance_ngn": 500
+      },
+      "at": "2026-08-23T16:26:53.788Z"
+    },
+    {
+      "name": "pay_response",
+      "data": {
+        "status": 200,
+        "body": "{\"txId\":\"2223817\",\"status\":\"pending\",\"provider\":\"flutterwave\",\"settledAt\":null,\"fee\":\"1.50 NGN\",\"amount\":100,\"currency\":\"NGN\",\"method\":\"bank_transfer\",\"recipient\":\"0690000032\",\"stellarTxHash\":null,\"policyEnforcement\":\"off-chain\",\"sorobanPolicyContractId\":null}"
+      },
+      "at": "2026-08-23T16:26:55.736Z"
+    },
+    {
+      "name": "ledger_after",
+      "data": {
+        "balance_ngn": 400
+      },
+      "at": "2026-08-23T16:26:55.974Z"
+    },
+    {
+      "name": "summary",
+      "data": {
+        "fw_direct_ok": true,
+        "pay_ok": true,
+        "provider_flutterwave": true,
+        "ledger_debited": true,
+        "ip_whitelist_blocked": false,
+        "failover_path_hit": true,
+        "verdict": "PASS",
+        "fw_message": "Transfer Queued Successfully"
+      },
+      "at": "2026-08-23T16:26:55.975Z"
+    }
+  ]
+}

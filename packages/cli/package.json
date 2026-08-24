@@ -1,0 +1,31 @@
+{
+  "name": "@paysmithhq/cli",
+  "version": "0.2.2",
+  "description": "Paysmith CLI for agent wallets: create, balance, pay.",
+  "type": "module",
+  "bin": {
+    "paysmith": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@paysmithhq/sdk": "^0.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "typescript": "^5.8.3"
+  },
+  "license": "MIT"
+}

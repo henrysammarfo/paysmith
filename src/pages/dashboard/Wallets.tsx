@@ -13,11 +13,12 @@ interface AgentWallet {
   status: string;
   balance_ghs: number;
   balance_ngn: number;
-  balance_usdc: number;
-  payment_methods: string[];
-  spending_policy: Record<string, number>;
-  total_volume: number;
-  total_txns: number;
+  balance_usd: number;
+  balance_kes?: number;
+  balance_xlm?: number;
+  daily_cap?: number;
+  max_per_tx?: number;
+  payment_methods?: string[];
   created_at: string;
 }
 
@@ -66,13 +67,21 @@ const Wallets = () => {
   const formatBalance = (w: AgentWallet) => {
     if (w.currency === "GHS") return `₵${Number(w.balance_ghs).toLocaleString()}`;
     if (w.currency === "NGN") return `₦${Number(w.balance_ngn).toLocaleString()}`;
-    if (w.currency === "USDC") return `$${Number(w.balance_usdc).toLocaleString()}`;
+    if (w.currency === "USDC" || w.currency === "USD") return `$${Number(w.balance_usd).toLocaleString()}`;
+    if (w.currency === "KES") return `KSh${Number(w.balance_kes ?? 0).toLocaleString()}`;
+    if (w.currency === "XLM") return `${Number(w.balance_xlm ?? 0).toLocaleString()} XLM`;
     return `${Number(w.balance_ghs).toLocaleString()} ${w.currency}`;
   };
 
-  const getRailLabel = (methods: string[]) => {
-    if (!methods || methods.length === 0) return "No rail";
-    return methods[0].replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const getRailLabel = (w: AgentWallet) => {
+    if (w.payment_methods?.length) {
+      return w.payment_methods[0].replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    }
+    if (w.country === "GH") return "Mobile Money";
+    if (w.country === "NG") return "Bank / MoMo";
+    if (w.country === "KE") return "M-Pesa";
+    if (w.country === "ZA") return "Bank";
+    return "Multi-rail";
   };
 
   return (
@@ -111,7 +120,7 @@ const Wallets = () => {
                   <div>
                     <h3 className="font-medium">{w.name}</h3>
                     <p className="text-xs text-muted-foreground">
-                      {getRailLabel(w.payment_methods)} · {w.country}
+                      {getRailLabel(w)} · {w.country}
                     </p>
                   </div>
                 </div>

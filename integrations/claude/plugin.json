@@ -1,0 +1,18 @@
+{
+  "name": "paysmith",
+  "version": "0.2.0",
+  "description": "Paysmith agent payments — SDK, CLI, MCP for Africa MoMo + Stellar sandbox.",
+  "mcpServers": {
+    "paysmith": {
+      "command": "npx",
+      "args": ["-y", "@paysmithhq/mcp"],
+      "env": ["PAYSMITH_API_KEY", "PAYSMITH_BASE_URL"]
+    }
+  },
+  "skills": ["../../.claude/skills/paysmith-agent-payments"],
+  "npm": {
+    "sdk": "@paysmithhq/sdk",
+    "cli": "@paysmithhq/cli",
+    "mcp": "@paysmithhq/mcp"
+  }
+}

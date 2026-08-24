@@ -1,0 +1,26 @@
+{
+  "at": "2026-08-23T16:26:43.892Z",
+  "orphanRail": "reconcile_smoke_0169b230",
+  "reconBody": {
+    "scanned": 1,
+    "debited": 1,
+    "blocked": 0,
+    "errors": 0,
+    "results": [
+      {
+        "txId": "reconcile_smoke_0169b230",
+        "id": "d8264f97-50a1-49f5-a2f5-703fac390582",
+        "outcome": "debited",
+        "column": "balance_ghs",
+        "amount": 1
+      }
+    ]
+  },
+  "checks": {
+    "unauth_401": true,
+    "reconcile_ok": true,
+    "reconcile_hit_orphan": true,
+    "balance_debited": true,
+    "ledger_debited_at_set": true
+  }
+}

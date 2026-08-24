@@ -1,0 +1,10 @@
+{
+  "summary": {
+    "http_ok": true,
+    "provider_stellar": true,
+    "settled": true,
+    "hash": "a738802c1f073b4edc39ab3c3b5b5eebfe00caaf664ab968d5a08bd1fbdf10cb",
+    "ledger_debited": true,
+    "verdict": "PASS"
+  }
+}

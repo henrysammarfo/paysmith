@@ -1,56 +1,63 @@
 import { Copy, Check, Terminal, Zap, Shield, ArrowRightLeft } from "lucide-react";
 import { useState } from "react";
 
-const CODE_SNIPPET = `import Paysmith from '@paysmith/sdk';
+const CODE_SNIPPET = `const BASE = 'https://hkngxtrqhnkzkbqgqbjk.supabase.co/functions/v1';
+const KEY = process.env.PAYSMITH_TEST_KEY; // x-api-key
 
-// Give your AI agent a complete payment identity
-const agent = await Paysmith.createAgentWallet({
-  name: 'my-procurement-agent',
-  country: 'GH',
-  currency: 'GHS',
-  paymentMethods: ['mtn_momo', 'vodafone_cash', 'bank_transfer', 'usdc'],
-  spendingPolicy: {
-    dailyLimit: 5000,
-    maxSingleTx: 1000,
-    requireApprovalAbove: 2000
-  }
-});
+// 1) Create an agent wallet
+const { walletId } = await fetch(\`\${BASE}/agents-create\`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'x-api-key': KEY },
+  body: JSON.stringify({
+    name: 'procurement-bot',
+    country: 'GH',
+    currency: 'GHS',
+  }),
+}).then(r => r.json());
 
-// Agent receives a payment from a client
-const incoming = await agent.receive({
-  method: 'mtn_momo',
-  reference: 'INV-001',
-  webhook: 'https://yourapp.com/webhook'
-});
+// 2) Pay MoMo (or bank_transfer / crypto USDC|XLM)
+const tx = await fetch(\`\${BASE}/pay\`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'x-api-key': KEY,
+    'Idempotency-Key': 'order_42',
+  },
+  body: JSON.stringify({
+    walletId,
+    to: '0551234987',
+    amount: 1,
+    currency: 'GHS',
+    method: 'mobile_money',
+    bankCode: 'MTN',
+  }),
+}).then(r => r.json());
 
-// Agent pays a supplier
-const tx = await agent.pay({
-  to: '+233241234567',
-  amount: 500,
-  currency: 'GHS',
-  note: 'Payment for services rendered'
-});`;
+// 3) Check balance
+const bal = await fetch(\`\${BASE}/agents-balance?walletId=\${walletId}\`, {
+  headers: { 'x-api-key': KEY },
+}).then(r => r.json());`;
 
 const FEATURES = [
   {
     icon: Terminal,
-    title: "3-Line Integration",
-    description: "Create an agent wallet, receive payments, and pay suppliers — all in 3 API calls.",
+    title: "3 API calls",
+    description: "Create wallet → pay → balance. Real Edge endpoints — no fictional SDK.",
   },
   {
     icon: ArrowRightLeft,
-    title: "Multi-Rail Router",
-    description: "Auto-routes to the fastest, cheapest rail: MTN MoMo, Vodafone Cash, bank transfer, or USDC.",
+    title: "Multi-rail",
+    description: "Paystack MoMo, Flutterwave bank failover, Stellar XLM/USDC on testnet.",
   },
   {
     icon: Shield,
-    title: "Policy Enforcement",
-    description: "Daily limits, per-tx caps, and approval thresholds enforced at the API level.",
+    title: "Policy + KYC ceilings",
+    description: "Daily / per-tx caps clamped by KYC tier; Idempotency-Key stops double-spend.",
   },
   {
     icon: Zap,
-    title: "Agent-to-Agent Settlement",
-    description: "Agents pay each other directly. No intermediary. Settlement in seconds.",
+    title: "Sandbox-first",
+    description: "Test keys + Stellar testnet rails — production-shaped API before live KYB.",
   },
 ];
 
@@ -71,10 +78,10 @@ const CodeIntegrationSection = () => {
           Developer Experience
         </p>
         <h2 className="text-2xl sm:text-4xl md:text-5xl font-normal tracking-[-0.03em] mb-4">
-          One API. Three lines. Done.
+          One API. Three calls. Done.
         </h2>
         <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mb-12 md:mb-16">
-          Give any AI agent a complete payment identity — mobile money wallets, bank transfers, and stablecoin settlement — with a single SDK call.
+          Create an agent wallet, pay MoMo or Stellar USDC, then read the balance — against the live sandbox API.
         </p>
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">

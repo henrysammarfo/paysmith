@@ -1,0 +1,14 @@
+{
+    "wasmHash":  "3f3e7f9d526654dab9a7e372505a705443dad9989660f18db988d03cd79d28f7",
+    "contractId":  "CAHFJKHA7O75475ZI4Y4C6W6PIAR5MZUSNDKPNKADJ7KEHR7XNSTGMBE",
+    "explorer":  "https://lab.stellar.org/r/testnet/contract/CAHFJKHA7O75475ZI4Y4C6W6PIAR5MZUSNDKPNKADJ7KEHR7XNSTGMBE",
+    "functions":  [
+                      "try_spend",
+                      "get_spent",
+                      "check_spend"
+                  ],
+    "previousContractId":  "CAOJF27FUDJB3IAH27QYDE6HVLKC7R7VCUBAZ64Y3VLKIQDQ2WTMW5ZY",
+    "at":  "2026-08-24T06:19:58.6015668Z",
+    "deployTx":  "https://stellar.expert/explorer/testnet/tx/4f4cf1d5f744a02d0cb8f5e06e2e8a7064c46da58e19b01ab35b6e1137d5287e",
+    "network":  "testnet"
+}

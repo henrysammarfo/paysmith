@@ -1,0 +1,9 @@
+{
+  "at": "2026-08-23T16:37:10.511Z",
+  "waitlist": "0",
+  "wallets": "21",
+  "txs": "33",
+  "stellar_txs": "6",
+  "test_gate": "PASS (unit+ci+rails+stress)",
+  "stress": "PASS 8 concurrent 1 debit"
+}

@@ -12,6 +12,20 @@ dist
 dist-ssr
 *.local
 
+# Secrets
+.env
+.env.*
+!.env.example
+.env.edge-secrets
+*.secrets
+.cursor/mcp.json
+.tmp-smoke.json
+supabase/.temp/
+
+# Package install/build artifacts
+packages/*/node_modules/
+packages/*/dist/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -22,3 +36,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Rust / Soroban
+contracts/**/target/

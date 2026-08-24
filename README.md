@@ -121,12 +121,12 @@ When the limit is exceeded, a `429 Too Many Requests` response is returned with 
 
 | Method | Countries | Provider |
 |--------|-----------|----------|
-| `mobile_money` | GH, NG | Chimoney |
-| `bank_transfer` | NG | Flutterwave |
-| `crypto` | Global | Chimoney |
-| `card` | NG | Flutterwave |
+| `mobile_money` | GH, NG | Paystack (primary) |
+| `bank_transfer` | GH, NG | Paystack → Flutterwave fallback |
+| `crypto` / USDC | Global | **Stellar Horizon** (fails closed until treasury configured) |
+| `card` | — | Not routed yet |
 
-> Without provider API keys configured, all payments route through the **sandbox** provider (instant settlement, 0.5% fee).
+> Without Paystack/Flutterwave keys, fiat payments use the **sandbox** provider (instant settlement, 0.5% fee). Crypto never uses sandbox fake-settle.
 
 ### Spending Policies
 
@@ -143,6 +143,7 @@ Each wallet has configurable spending policies:
 - Transactions exceeding `maxSingleTx` → `400`
 - Transactions exceeding `requireApprovalAbove` → `402` (requires manual approval)
 - Daily cumulative spend exceeding `dailyLimit` → `400`
+- Insufficient ledger balance → `402`
 
 ### Webhooks
 
@@ -160,7 +161,7 @@ Configure a webhook URL in the dashboard to receive real-time events:
     "recipient": "+2348012345678",
     "status": "settled",
     "fee": 25.00,
-    "provider": "chimoney",
+    "provider": "paystack",
     "timestamp": "2026-04-14T12:00:00.000Z"
   }
 }
@@ -317,10 +318,13 @@ This project is built with Lovable and deploys automatically via the Lovable pla
 
 | Secret | Purpose |
 |--------|---------|
-| `CHIMONEY_API_KEY` | Chimoney mobile money & crypto payouts |
-| `FLUTTERWAVE_SECRET_KEY` | Flutterwave bank transfers & card payments |
+| `PAYSTACK_SECRET_KEY` | Primary fiat (bank + MoMo) for NG/GH |
+| `FLUTTERWAVE_SECRET_KEY` | Fiat bank-transfer fallback |
+| `STELLAR_TREASURY_SECRET` | Stellar USDC settlement (Horizon) |
+| `STELLAR_NETWORK` | `testnet` (default) or `mainnet` |
+| `WEBHOOK_INTERNAL_SECRET` | Optional alt auth for webhook-deliver |
 
-Without these, all payments route through the sandbox provider.
+Without Paystack/Flutterwave, fiat routes through the sandbox provider. Crypto requires Stellar config.
 
 ---
 

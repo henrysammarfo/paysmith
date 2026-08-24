@@ -1,0 +1,59 @@
+{
+  "at": "2026-08-23T16:36:45.576Z",
+  "concurrency": 8,
+  "idempotencyKey": "stress_1787502997160_k04ze5",
+  "walletId": "1c7173b2-34f5-4419-adba-3600ea60ef13",
+  "statuses": [
+    409,
+    409,
+    409,
+    409,
+    409,
+    409,
+    200,
+    409
+  ],
+  "uniqueTxIds": [
+    "8bb77b049ab88ad4f516dca32ecdebe5fe6442a3f3d7fc5f8d49f24435aaa58c"
+  ],
+  "balBefore": 9.5,
+  "balAfter": 9.4,
+  "debitDelta": 0.09999999999999964,
+  "notMultiDebit": true,
+  "sameTx": true,
+  "pass": true,
+  "sample": [
+    {
+      "status": 409,
+      "body": {
+        "error": "Idempotent request already in progress",
+        "retryAfter": 2
+      },
+      "replayed": null
+    },
+    {
+      "status": 409,
+      "body": {
+        "error": "Idempotent request already in progress",
+        "retryAfter": 2
+      },
+      "replayed": null
+    },
+    {
+      "status": 409,
+      "body": {
+        "error": "Idempotent request already in progress",
+        "retryAfter": 2
+      },
+      "replayed": null
+    },
+    {
+      "status": 409,
+      "body": {
+        "error": "Idempotent request already in progress",
+        "retryAfter": 2
+      },
+      "replayed": null
+    }
+  ]
+}

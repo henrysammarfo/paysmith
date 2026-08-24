@@ -1,0 +1,61 @@
+{
+  "summary": {
+    "auth_and_wallet": true,
+    "paystack_reached": true,
+    "ledger_not_debited_on_rail_fail": false,
+    "paystack_ghs_balance_pesewas": 200000,
+    "settle_needs_paystack_topup": false,
+    "verdict": "PASS full settle"
+  },
+  "steps": [
+    {
+      "name": "paystack_balance",
+      "data": {
+        "status": true,
+        "message": "Balances retrieved",
+        "data": [
+          {
+            "currency": "GHS",
+            "balance": 200000
+          }
+        ]
+      },
+      "at": "2026-08-23T16:26:47.380Z"
+    },
+    {
+      "name": "ledger_funded",
+      "data": {
+        "id": "0e2735c2-37f2-4e26-9bc5-afb9a5615a48",
+        "balance_ghs": 25
+      },
+      "at": "2026-08-23T16:26:48.108Z"
+    },
+    {
+      "name": "pay_response",
+      "data": {
+        "status": 200,
+        "body": "{\"txId\":\"TRF_04xan9nsflxbxnys\",\"status\":\"pending\",\"provider\":\"paystack\",\"settledAt\":null,\"fee\":\"0.01 GHS\",\"amount\":1,\"currency\":\"GHS\",\"method\":\"mobile_money\",\"recipient\":\"0551234987\",\"stellarTxHash\":null,\"policyEnforcement\":\"off-chain\",\"sorobanPolicyContractId\":null}"
+      },
+      "at": "2026-08-23T16:26:51.602Z"
+    },
+    {
+      "name": "ledger_after",
+      "data": {
+        "balance_ghs": 24
+      },
+      "at": "2026-08-23T16:26:51.792Z"
+    },
+    {
+      "name": "summary",
+      "data": {
+        "auth_and_wallet": true,
+        "paystack_reached": true,
+        "ledger_not_debited_on_rail_fail": false,
+        "paystack_ghs_balance_pesewas": 200000,
+        "settle_needs_paystack_topup": false,
+        "verdict": "PASS full settle"
+      },
+      "at": "2026-08-23T16:26:51.792Z"
+    }
+  ]
+}

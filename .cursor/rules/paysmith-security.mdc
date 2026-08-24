@@ -1,0 +1,38 @@
+---
+description: Paysmith security and testing standards — no unhackable claims
+alwaysApply: true
+---
+
+# Paysmith Security & Testing
+
+## Honesty rule
+
+Never claim "unhackable," "zero bugs," or "pen-test complete" unless an external report exists in `docs/`. Document residual risk in `memory/FACT_CHECK.md`.
+
+## P0 security fixes
+
+- `webhook-deliver` must require service-role JWT or internal signed token
+- `/pay` must debit ledger balances atomically with provider/Stellar settlement
+- Idempotency keys on `/pay` to prevent double-spend
+
+## Required tests before production
+
+```typescript
+// Minimum CI gate
+- API smoke: create wallet → pay → balance check
+- RLS write-access: cross-tenant isolation (must fail)
+- Webhook auth: unauthenticated deliver must return 401
+- Spending policy: over-limit must return 402/403
+```
+
+## Threat model sections (when writing docs/THREAT_MODEL.md)
+
+1. API key theft → rate limits + key rotation
+2. Webhook spoofing → inbound auth + HMAC verify docs for developers
+3. Balance manipulation → double-entry ledger + reconciliation
+4. Provider failure → idempotency + pending state machine
+5. Admin abuse → audit log on role changes
+
+## Memory updates
+
+After security or test changes, update `memory/CURRENT_STATE.md` and append `memory/SESSION_LOG.md`.

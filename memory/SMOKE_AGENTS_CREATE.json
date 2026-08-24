@@ -1,0 +1,33 @@
+{
+  "at": "2026-08-23T16:26:40.917Z",
+  "created": {
+    "walletId": "f2ec2845-31e0-4df5-af37-77cf9793ac21",
+    "status": "active",
+    "name": "Schema Align Probe",
+    "country": "GH",
+    "currency": "GHS",
+    "paymentMethods": [
+      "mobile_money"
+    ],
+    "spendingPolicy": {
+      "dailyLimit": 1234,
+      "maxSingleTx": 56,
+      "requireApprovalAbove": 56
+    },
+    "kycTier": "tier0",
+    "kycStatus": "unverified",
+    "createdAt": "2026-08-23T16:26:38.807799+00:00"
+  },
+  "checks": {
+    "status_201": true,
+    "wallet_uuid": true,
+    "no_api_key": true,
+    "spending_policy": true,
+    "db_daily_cap": true,
+    "db_max_per_tx": true,
+    "db_email": true,
+    "db_payment_methods": true,
+    "response_payment_methods": true,
+    "balance_ok": true
+  }
+}

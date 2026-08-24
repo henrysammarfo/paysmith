@@ -1,0 +1,8 @@
+{
+  "at": "2026-08-24T09:52:57.653Z",
+  "oauth": true,
+  "b2c": {
+    "status": 200,
+    "body": "{\"txId\":\"AG_20260824_010010030rkmro3cmto1\",\"status\":\"pending\",\"provider\":\"daraja\",\"settledAt\":null,\"fee\":\"0.10 KES\",\"amount\":10,\"currency\":\"KES\",\"method\":\"mobile_money\",\"recipient\":\"254708374149\",\"stellarTxHash\":null,\"policyEnforcement\":\"soroban+off-chain\",\"sorobanPolicyContractId\":\"CAHFJKHA7O75475ZI4Y4C6W6PIAR5MZUSNDKPNKADJ7KEHR7XNSTGMBE\"}"
+  }
+}

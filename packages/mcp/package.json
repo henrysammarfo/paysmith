@@ -1,0 +1,25 @@
+﻿{
+  "name": "@paysmithhq/mcp",
+  "version": "0.2.3",
+  "description": "Paysmith MCP server for Cursor, Claude, and Codex.",
+  "type": "module",
+  "bin": {
+    "paysmith-mcp": "dist/server.js"
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": { "node": ">=18" },
+  "publishConfig": { "access": "public" },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "@paysmithhq/sdk": "^0.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "typescript": "^5.8.3"
+  },
+  "license": "MIT"
+}

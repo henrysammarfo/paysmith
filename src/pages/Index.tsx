@@ -206,7 +206,7 @@ const Index = () => {
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Calendar size={16} className="sm:w-5 sm:h-5" />
-                    Stellar WA Residency
+                    Testnet sandbox
                   </span>
                 </div>
 
@@ -223,7 +223,7 @@ const Index = () => {
                   className="animate-blur-fade-up text-sm sm:text-lg md:text-xl text-foreground/70 mb-6 md:mb-12 max-w-2xl leading-relaxed"
                   style={{ animationDelay: "500ms" }}
                 >
-                  Give your AI agent a mobile money wallet in 3 lines of code. MTN MoMo, Vodafone Cash, bank transfers, and USDC — one API.
+                  Production-shaped API for agent wallets: MTN MoMo, bank transfers, and Stellar USDC on testnet — one integration before live KYB.
                 </p>
 
                 {/* CTA */}

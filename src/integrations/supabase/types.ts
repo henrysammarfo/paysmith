@@ -16,58 +16,97 @@ export type Database = {
     Tables: {
       agent_wallets: {
         Row: {
-          api_key: string | null
-          balance_ghs: number | null
-          balance_ngn: number | null
-          balance_usdc: number | null
-          chimoney_sub_account_id: string | null
-          country: string
-          created_at: string
-          currency: string
           id: string
-          name: string
           owner_id: string
+          name: string
+          email: string
+          country: string | null
+          rail_agent_id: string | null
+          passport_url: string | null
+          daily_cap: number | null
+          max_per_tx: number | null
+          status: string | null
+          created_at: string | null
+          stellar_memo: number
+          bank_account: string | null
+          bank_code: string | null
+          stellar_public_key: string | null
+          stellar_encrypted_secret: string | null
+          currency: string | null
+          balance_ngn: number | null
+          balance_usd: number | null
+          balance_ghs: number | null
+          bridged_usdc_amount: number | null
+          momo_number: string | null
+          airtime_number: string | null
+          kyc_tier: string
+          kyc_status: string
+          stellar_account_id: string | null
+          balance_kes: number | null
+          balance_xlm: number | null
           payment_methods: string[] | null
-          spending_policy: Json | null
-          status: string
-          total_txns: number | null
-          total_volume: number | null
         }
         Insert: {
-          api_key?: string | null
-          balance_ghs?: number | null
-          balance_ngn?: number | null
-          balance_usdc?: number | null
-          chimoney_sub_account_id?: string | null
-          country: string
-          created_at?: string
-          currency: string
-          id: string
-          name: string
+          id?: string
           owner_id: string
+          name: string
+          email: string
+          country?: string | null
+          rail_agent_id?: string | null
+          passport_url?: string | null
+          daily_cap?: number | null
+          max_per_tx?: number | null
+          status?: string | null
+          created_at?: string | null
+          stellar_memo?: number
+          bank_account?: string | null
+          bank_code?: string | null
+          stellar_public_key?: string | null
+          stellar_encrypted_secret?: string | null
+          currency?: string | null
+          balance_ngn?: number | null
+          balance_usd?: number | null
+          balance_ghs?: number | null
+          bridged_usdc_amount?: number | null
+          momo_number?: string | null
+          airtime_number?: string | null
+          kyc_tier?: string
+          kyc_status?: string
+          stellar_account_id?: string | null
+          balance_kes?: number | null
+          balance_xlm?: number | null
           payment_methods?: string[] | null
-          spending_policy?: Json | null
-          status?: string
-          total_txns?: number | null
-          total_volume?: number | null
         }
         Update: {
-          api_key?: string | null
-          balance_ghs?: number | null
-          balance_ngn?: number | null
-          balance_usdc?: number | null
-          chimoney_sub_account_id?: string | null
-          country?: string
-          created_at?: string
-          currency?: string
           id?: string
-          name?: string
           owner_id?: string
+          name?: string
+          email?: string
+          country?: string | null
+          rail_agent_id?: string | null
+          passport_url?: string | null
+          daily_cap?: number | null
+          max_per_tx?: number | null
+          status?: string | null
+          created_at?: string | null
+          stellar_memo?: number
+          bank_account?: string | null
+          bank_code?: string | null
+          stellar_public_key?: string | null
+          stellar_encrypted_secret?: string | null
+          currency?: string | null
+          balance_ngn?: number | null
+          balance_usd?: number | null
+          balance_ghs?: number | null
+          bridged_usdc_amount?: number | null
+          momo_number?: string | null
+          airtime_number?: string | null
+          kyc_tier?: string
+          kyc_status?: string
+          stellar_account_id?: string | null
+          balance_kes?: number | null
+          balance_xlm?: number | null
           payment_methods?: string[] | null
-          spending_policy?: Json | null
-          status?: string
-          total_txns?: number | null
-          total_volume?: number | null
         }
         Relationships: [
           {
@@ -168,6 +207,33 @@ export type Database = {
           email?: string
           id?: string
           subscribed_at?: string
+        }
+        Relationships: []
+      }
+      waitlist_signups: {
+        Row: {
+          id: string
+          email: string
+          role: string
+          corridor: string
+          source: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          email: string
+          role?: string
+          corridor?: string
+          source?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          role?: string
+          corridor?: string
+          source?: string
+          created_at?: string
         }
         Relationships: []
       }

@@ -10,7 +10,7 @@ const sidebarSections = [
   { id: "api-agents-create", label: "POST /agents-create", icon: Server, keywords: ["create wallet", "agent", "spending policy", "payment methods", "country", "currency"] },
   { id: "api-agents-balance", label: "GET /agents-balance", icon: Server, keywords: ["balance", "wallet", "query", "list wallets"] },
   { id: "api-pay", label: "POST /pay", icon: Server, keywords: ["payment", "send money", "mobile money", "bank transfer", "crypto", "recipient"] },
-  { id: "multi-rail", label: "Multi-Rail Routing", icon: Book, keywords: ["chimoney", "flutterwave", "sandbox", "provider", "routing", "fee"] },
+  { id: "multi-rail", label: "Multi-Rail Routing", icon: Book, keywords: ["paystack", "flutterwave", "stellar", "sandbox", "provider", "routing", "fee"] },
   { id: "policies", label: "Policy Enforcement", icon: Shield, keywords: ["spending policy", "daily limit", "max transaction", "approval"] },
   { id: "webhooks", label: "Webhooks", icon: Code, keywords: ["webhook", "signature", "hmac", "event", "transaction.settled", "transaction.failed"] },
   { id: "rate-limits", label: "Rate Limits", icon: Gauge, keywords: ["rate limit", "throttle", "429", "retry", "window"] },
@@ -65,7 +65,7 @@ function ParamTable({ params }: { params: { name: string; type: string; required
   );
 }
 
-const BASE_URL = "https://your-project.supabase.co/functions/v1";
+const BASE_URL = "https://hkngxtrqhnkzkbqgqbjk.supabase.co/functions/v1";
 
 const Docs = () => {
   const [activeSection, setActiveSection] = useState("quickstart");
@@ -190,8 +190,26 @@ const Docs = () => {
               <h3 className="font-medium flex items-center gap-2"><Shield size={16} /> Prerequisites</h3>
               <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
                 <li>A Paysmith account — <Link to="/signup" className="text-primary hover:underline">sign up here</Link></li>
-                <li>A Live or Test API key from the dashboard</li>
+                <li>A Test API key from the dashboard (<code className="text-xs bg-secondary/50 px-1 rounded">ps_test_…</code>)</li>
               </ul>
+              <h3 className="font-medium flex items-center gap-2 mt-4"><Terminal size={16} /> Three calls</h3>
+              <p className="text-sm text-muted-foreground">Create wallet → pay (MoMo or Stellar) → read balance. Always send <code className="text-xs bg-secondary/50 px-1 rounded">Idempotency-Key</code> on pay.</p>
+              <CodeBlock
+                code={`# 1) Create wallet
+curl -X POST ${BASE_URL}/agents-create \\
+  -H "Content-Type: application/json" -H "x-api-key: $PAYSMITH_TEST_KEY" \\
+  -d '{"name":"bot","country":"GH","currency":"GHS"}'
+
+# 2) Pay (example: Stellar USDC testnet)
+curl -X POST ${BASE_URL}/pay \\
+  -H "Content-Type: application/json" -H "x-api-key: $PAYSMITH_TEST_KEY" \\
+  -H "Idempotency-Key: demo_001" \\
+  -d '{"walletId":"WALLET_ID","to":"G...","amount":1,"currency":"USDC","method":"crypto"}'
+
+# 3) Balance
+curl "${BASE_URL}/agents-balance?walletId=WALLET_ID" -H "x-api-key: $PAYSMITH_TEST_KEY"`}
+                language="bash"
+              />
             </div>
           </section>
 
@@ -257,8 +275,7 @@ const Docs = () => {
 
             <h3 className="text-lg font-medium mt-6 mb-2">Example Response <span className="text-xs font-normal text-muted-foreground">201 Created</span></h3>
             <CodeBlock code={`{
-  "walletId": "ps_agent_a1b2c3d4e5f6g7h8",
-  "apiKey": "ps_wk_9f8e7d6c5b4a3...",
+  "walletId": "c2caf034-475a-49c6-9b3a-8e5ecd4bc120",
   "status": "active",
   "name": "Procurement Bot",
   "country": "NG",
@@ -267,8 +284,11 @@ const Docs = () => {
   "spendingPolicy": {
     "dailyLimit": 50000,
     "maxSingleTx": 10000,
-    "requireApprovalAbove": 25000
-  }
+    "requireApprovalAbove": 10000
+  },
+  "kycTier": "tier0",
+  "kycStatus": "unverified",
+  "createdAt": "2026-04-10T08:30:00Z"
 }`} language="json" />
           </section>
 
@@ -286,12 +306,12 @@ const Docs = () => {
             ]} />
 
             <h3 className="text-lg font-medium mt-6 mb-2">Example — Single Wallet</h3>
-            <CodeBlock code={`curl "${BASE_URL}/agents-balance?walletId=ps_agent_a1b2c3d4e5f6g7h8" \\
+            <CodeBlock code={`curl "${BASE_URL}/agents-balance?walletId=c2caf034-475a-49c6-9b3a-8e5ecd4bc120" \\
   -H "X-API-KEY: ps_test_abc123..."`} language="bash" />
 
             <h3 className="text-lg font-medium mt-6 mb-2">Response <span className="text-xs font-normal text-muted-foreground">200 OK</span></h3>
             <CodeBlock code={`{
-  "walletId": "ps_agent_a1b2c3d4e5f6g7h8",
+  "walletId": "c2caf034-475a-49c6-9b3a-8e5ecd4bc120",
   "name": "Procurement Bot",
   "country": "NG",
   "currency": "NGN",
@@ -299,12 +319,14 @@ const Docs = () => {
   "balances": {
     "ghs": 0,
     "ngn": 45200.50,
-    "usdc": 0
+    "usd": 0,
+    "usdc": 0,
+    "kes": 0,
+    "xlm": 0
   },
-  "paymentMethods": ["mobile_money", "bank_transfer"],
-  "spendingPolicy": { "dailyLimit": 50000, "maxSingleTx": 10000, "requireApprovalAbove": 25000 },
-  "totalVolume": 125000,
-  "totalTransactions": 42,
+  "spendingPolicy": { "dailyLimit": 50000, "maxSingleTx": 10000, "requireApprovalAbove": 10000 },
+  "kycTier": "tier0",
+  "kycStatus": "unverified",
   "createdAt": "2026-04-10T08:30:00Z"
 }`} language="json" />
 
@@ -330,7 +352,7 @@ const Docs = () => {
 
             <h3 className="text-lg font-medium mt-6 mb-2">Request Body</h3>
             <ParamTable params={[
-              { name: "walletId", type: "string", required: true, desc: "Agent wallet ID (ps_agent_...)" },
+              { name: "walletId", type: "string", required: true, desc: "Agent wallet UUID" },
               { name: "to", type: "string", required: true, desc: "Recipient phone number, address, or account" },
               { name: "amount", type: "number", required: true, desc: "Amount to send (positive number)" },
               { name: "currency", type: "string", required: true, desc: "ISO 4217 currency code" },
@@ -365,12 +387,18 @@ const Docs = () => {
 }`} language="json" />
 
             <h3 className="text-lg font-medium mt-6 mb-2">Policy Enforcement</h3>
-            <p className="text-sm text-muted-foreground mb-2">The API validates every payment against the wallet's spending policy before routing:</p>
+            <p className="text-sm text-muted-foreground mb-2">The API validates every payment against the wallet's spending policy and KYC/KYB ceilings before routing:</p>
             <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-              <li><code className="text-foreground bg-secondary/50 px-1 rounded text-xs">400</code> — Exceeds <code className="text-xs bg-secondary/50 px-1 rounded">maxSingleTx</code> or <code className="text-xs bg-secondary/50 px-1 rounded">dailyLimit</code></li>
+              <li><code className="text-foreground bg-secondary/50 px-1 rounded text-xs">403</code> — Exceeds <code className="text-xs bg-secondary/50 px-1 rounded">maxSingleTx</code> / daily limit after KYC·KYB clamp</li>
               <li><code className="text-foreground bg-secondary/50 px-1 rounded text-xs">402</code> — Requires manual approval (amount &gt; <code className="text-xs bg-secondary/50 px-1 rounded">requireApprovalAbove</code>)</li>
-              <li><code className="text-foreground bg-secondary/50 px-1 rounded text-xs">403</code> — Wallet is not active</li>
+              <li><code className="text-foreground bg-secondary/50 px-1 rounded text-xs">403</code> — Wallet inactive, KYC rejected, or live key without approved KYB</li>
             </ul>
+            <p className="text-sm text-muted-foreground mt-3 mb-2">Pass <code className="text-foreground bg-secondary/50 px-1 rounded text-xs">Idempotency-Key</code> to prevent double-spend on retries (replayed responses include <code className="text-xs bg-secondary/50 px-1 rounded">Idempotency-Replayed: true</code>).</p>
+            <CodeBlock code={`curl -X POST ${BASE_URL}/pay \\
+  -H "Content-Type: application/json" \\
+  -H "x-api-key: YOUR_API_KEY" \\
+  -H "Idempotency-Key: order_abc_001" \\
+  -d '{ "walletId":"...", "to":"0551234987", "amount":1, "currency":"GHS", "method":"mobile_money", "bankCode":"MTN" }'`} language="bash" />
           </section>
 
           {/* Multi-Rail Routing */}
@@ -390,9 +418,10 @@ const Docs = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  <tr><td className="px-4 py-2 font-medium">Chimoney</td><td className="px-4 py-2 text-muted-foreground">mobile_money, crypto</td><td className="px-4 py-2 text-muted-foreground">1%</td><td className="px-4 py-2 text-muted-foreground">Pending → settled</td></tr>
-                  <tr><td className="px-4 py-2 font-medium">Flutterwave</td><td className="px-4 py-2 text-muted-foreground">bank_transfer</td><td className="px-4 py-2 text-muted-foreground">1.5%</td><td className="px-4 py-2 text-muted-foreground">Instant or pending</td></tr>
-                  <tr><td className="px-4 py-2 font-medium">Sandbox</td><td className="px-4 py-2 text-muted-foreground">All (fallback)</td><td className="px-4 py-2 text-muted-foreground">0.5%</td><td className="px-4 py-2 text-muted-foreground">Instant (simulated)</td></tr>
+                  <tr><td className="px-4 py-2 font-medium">Paystack</td><td className="px-4 py-2 text-muted-foreground">mobile_money, bank_transfer</td><td className="px-4 py-2 text-muted-foreground">~1%</td><td className="px-4 py-2 text-muted-foreground">Pending → settled</td></tr>
+                  <tr><td className="px-4 py-2 font-medium">Flutterwave</td><td className="px-4 py-2 text-muted-foreground">bank_transfer (fallback)</td><td className="px-4 py-2 text-muted-foreground">1.5%</td><td className="px-4 py-2 text-muted-foreground">Instant or pending</td></tr>
+                  <tr><td className="px-4 py-2 font-medium">Stellar</td><td className="px-4 py-2 text-muted-foreground">crypto / USDC</td><td className="px-4 py-2 text-muted-foreground">network fee</td><td className="px-4 py-2 text-muted-foreground">On-chain (requires treasury)</td></tr>
+                  <tr><td className="px-4 py-2 font-medium">Sandbox</td><td className="px-4 py-2 text-muted-foreground">Fiat fallback only</td><td className="px-4 py-2 text-muted-foreground">0.5%</td><td className="px-4 py-2 text-muted-foreground">Instant (simulated)</td></tr>
                 </tbody>
               </table>
             </div>
@@ -408,12 +437,29 @@ const Docs = () => {
               Every wallet has a <code className="text-foreground bg-secondary/50 px-1 rounded text-xs">spendingPolicy</code> object enforced on each payment:
             </p>
             <CodeBlock code={`{
-  "dailyLimit": 10000,       // Max total spend per UTC day
-  "maxSingleTx": 2000,      // Max per-transaction amount
+  "dailyLimit": 10000,       // Max total spend per UTC day (clamped by KYC/KYB)
+  "maxSingleTx": 2000,      // Max per-transaction amount (clamped by KYC/KYB)
   "requireApprovalAbove": 5000  // Flag for manual approval
 }`} language="json" />
+            <div className="overflow-x-auto my-4">
+              <table className="w-full text-sm border border-border rounded-xl overflow-hidden">
+                <thead className="bg-secondary/50">
+                  <tr>
+                    <th className="text-left px-4 py-2 font-medium">Tier</th>
+                    <th className="text-left px-4 py-2 font-medium">Daily max</th>
+                    <th className="text-left px-4 py-2 font-medium">Per-tx max</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  <tr><td className="px-4 py-2">KYC tier0 (default)</td><td className="px-4 py-2 text-muted-foreground">1,000</td><td className="px-4 py-2 text-muted-foreground">200</td></tr>
+                  <tr><td className="px-4 py-2">KYC tier1</td><td className="px-4 py-2 text-muted-foreground">50,000</td><td className="px-4 py-2 text-muted-foreground">10,000</td></tr>
+                  <tr><td className="px-4 py-2">KYC tier2</td><td className="px-4 py-2 text-muted-foreground">500,000</td><td className="px-4 py-2 text-muted-foreground">100,000</td></tr>
+                  <tr><td className="px-4 py-2">KYB sandbox (test keys)</td><td className="px-4 py-2 text-muted-foreground">10,000</td><td className="px-4 py-2 text-muted-foreground">2,000</td></tr>
+                </tbody>
+              </table>
+            </div>
             <p className="text-sm text-muted-foreground mt-2">
-              Update policies via the dashboard Wallet settings or by recreating the wallet with new limits.
+              Effective limit = min(wallet policy, KYC ceiling, KYB ceiling). Live API keys require <code className="text-xs bg-secondary/50 px-1 rounded">kyb_status=approved</code>.
             </p>
           </section>
 

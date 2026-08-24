@@ -1,0 +1,36 @@
+---
+description: Stellar integration standards for Paysmith — Horizon, USDC, Soroban, SEP
+globs: supabase/**/*,src/**/*,contracts/**/*
+alwaysApply: false
+---
+
+# Paysmith Stellar Standards
+
+Paysmith is "Stripe for AI Agents in Africa" on **Stellar**, not Arc/Magmos.
+
+## Non-negotiables
+
+- Every Stellar claim in UI/docs must have matching code + testnet/mainnet tx evidence.
+- USDC means **Circle USDC on Stellar** (Horizon transfer), not a Postgres column alone.
+- Store `stellar_tx_hash` on every on-chain settlement.
+
+## Integration stack (in order)
+
+1. `@stellar/stellar-sdk` — Horizon queries, tx submission
+2. Treasury Stellar account + USDC trustline
+3. Per-wallet: sub-account or memo-based routing
+4. Soroban spending-policy contract for agent limits (daily cap, max tx)
+5. SEP-31 anchor for fiat corridors (Yellow Card, MoneyGram, etc.)
+6. Freighter for admin/treasury signing in dashboard
+
+## Do not
+
+- Badge "Stellar WA Residency" without verified program status
+- Route `method: crypto` through dead Chimoney as USDC stand-in — use Stellar Horizon only
+- Apply to SCF before reading `memory/SCF_HANDBOOK.md` and verifying current round dates
+
+## Reference competitors
+
+Afripay, AnchorFX, Kutana — all have Soroban + SEP on Stellar for Africa payments.
+
+See `memory/OPPORTUNITIES.md` and `memory/AUDIT_REPORT.md`.

@@ -23,6 +23,8 @@ interface Transaction {
   fee: number | null;
   note: string | null;
   rail_tx_id: string | null;
+  stellar_tx_hash: string | null;
+  provider: string | null;
   created_at: string;
 }
 
@@ -115,8 +117,12 @@ const Transactions = () => {
     if (c === "GHS") return "₵";
     if (c === "NGN") return "₦";
     if (c === "USDC" || c === "USD") return "$";
+    if (c === "XLM") return "XLM ";
     return c + " ";
   };
+
+  const stellarExplorerUrl = (hash: string) =>
+    `https://stellar.expert/explorer/testnet/tx/${hash}`;
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -180,6 +186,7 @@ const Transactions = () => {
                 <TableHead>Status</TableHead>
                 <TableHead>Fee</TableHead>
                 <TableHead className="hidden lg:table-cell">TX ID</TableHead>
+                <TableHead className="hidden lg:table-cell">Stellar</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -198,6 +205,9 @@ const Transactions = () => {
                   </TableCell>
                   <TableCell className="text-xs">
                     {t.method.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                    {t.provider ? (
+                      <span className="block text-[10px] text-muted-foreground">{t.provider}</span>
+                    ) : null}
                   </TableCell>
                   <TableCell>
                     <span
@@ -213,6 +223,21 @@ const Transactions = () => {
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
                     <code className="text-xs text-muted-foreground">{t.rail_tx_id || "—"}</code>
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    {t.stellar_tx_hash ? (
+                      <a
+                        href={stellarExplorerUrl(t.stellar_tx_hash)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-primary underline underline-offset-2"
+                        title={t.stellar_tx_hash}
+                      >
+                        {t.stellar_tx_hash.slice(0, 8)}…
+                      </a>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

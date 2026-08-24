@@ -19,6 +19,25 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Require service-role JWT or internal signed secret (P0 — never public)
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const internalSecret = Deno.env.get("WEBHOOK_INTERNAL_SECRET");
+    const serviceRole = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const bearer = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+    const headerSecret = req.headers.get("X-Paysmith-Internal-Secret") ?? "";
+    const authorized =
+      (serviceRole.length > 0 && bearer === serviceRole) ||
+      (internalSecret != null &&
+        internalSecret.length > 0 &&
+        (bearer === internalSecret || headerSecret === internalSecret));
+
+    if (!authorized) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!

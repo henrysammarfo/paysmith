@@ -4,8 +4,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-api-key",
 };
 
-// ── In-memory rate limiter (per isolate) ───────────────────────────
-const RATE_LIMIT = 20; // requests per minute per key
+const RATE_LIMIT = 20;
 const RATE_WINDOW = 60_000;
 const rateBuckets = new Map<string, number[]>();
 
@@ -21,6 +20,21 @@ function checkRateLimit(key: string): { allowed: boolean; retryAfter: number; re
   timestamps.push(now);
   rateBuckets.set(key, timestamps);
   return { allowed: true, retryAfter: 0, remaining: RATE_LIMIT - timestamps.length, reset };
+}
+
+function spendingPolicyFromRow(row: { daily_cap?: number | null; max_per_tx?: number | null }) {
+  const dailyLimit = Number(row.daily_cap ?? 10000);
+  const maxSingleTx = Number(row.max_per_tx ?? 2000);
+  return {
+    dailyLimit,
+    maxSingleTx,
+    requireApprovalAbove: maxSingleTx,
+  };
+}
+
+function agentEmailFromName(name: string): string {
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 24) || "agent";
+  return `${slug}_${Date.now()}@paysmith.ai`;
 }
 
 Deno.serve(async (req) => {
@@ -41,7 +55,6 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Authenticate via API key
     const apiKey = req.headers.get("x-api-key");
     if (!apiKey || apiKey.length > 100) {
       return new Response(JSON.stringify({ error: "Missing or invalid X-API-KEY header" }), {
@@ -74,7 +87,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Rate limit check
     const rl = checkRateLimit(apiKey);
     const rlHeaders = {
       "X-RateLimit-Limit": String(RATE_LIMIT),
@@ -98,7 +110,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate input formats
     if (typeof name !== "string" || name.length < 1 || name.length > 100) {
       return new Response(
         JSON.stringify({ error: "name must be 1-100 characters" }),
@@ -113,17 +124,16 @@ Deno.serve(async (req) => {
       );
     }
 
-    if (typeof currency !== "string" || !/^[A-Z]{3}$/.test(currency)) {
+    if (typeof currency !== "string" || !/^[A-Z]{3,4}$/.test(currency)) {
       return new Response(
-        JSON.stringify({ error: "currency must be a 3-letter ISO code (e.g. NGN)" }),
+        JSON.stringify({ error: "currency must be a 3–4 letter code (e.g. NGN, USDC)" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Validate paymentMethods if provided
     const VALID_METHODS = ["mobile_money", "bank_transfer", "crypto", "card"];
     if (paymentMethods !== undefined) {
-      if (!Array.isArray(paymentMethods) || paymentMethods.some((m: any) => !VALID_METHODS.includes(m))) {
+      if (!Array.isArray(paymentMethods) || paymentMethods.some((m: unknown) => typeof m !== "string" || !VALID_METHODS.includes(m))) {
         return new Response(
           JSON.stringify({ error: `paymentMethods must be an array of: ${VALID_METHODS.join(", ")}` }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -131,7 +141,8 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Validate spendingPolicy if provided
+    let dailyCap = 10000;
+    let maxPerTx = 2000;
     if (spendingPolicy !== undefined) {
       if (typeof spendingPolicy !== "object" || spendingPolicy === null || Array.isArray(spendingPolicy)) {
         return new Response(
@@ -139,7 +150,7 @@ Deno.serve(async (req) => {
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      const { dailyLimit, maxSingleTx, requireApprovalAbove } = spendingPolicy;
+      const { dailyLimit, maxSingleTx, requireApprovalAbove } = spendingPolicy as Record<string, unknown>;
       if (
         (dailyLimit !== undefined && (typeof dailyLimit !== "number" || dailyLimit <= 0)) ||
         (maxSingleTx !== undefined && (typeof maxSingleTx !== "number" || maxSingleTx <= 0)) ||
@@ -150,32 +161,28 @@ Deno.serve(async (req) => {
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
+      if (dailyLimit !== undefined) dailyCap = dailyLimit;
+      if (maxSingleTx !== undefined) maxPerTx = maxSingleTx;
     }
 
-    // Generate wallet ID and API key
-    const walletId = `ps_agent_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
-    const walletApiKey = `ps_wk_${crypto.randomUUID().replace(/-/g, "")}`;
-
-    const defaultPolicy = {
-      dailyLimit: 10000,
-      maxSingleTx: 2000,
-      requireApprovalAbove: 5000,
-    };
+    const methods = Array.isArray(paymentMethods) ? paymentMethods : [];
 
     const { data, error } = await supabase
       .from("agent_wallets")
       .insert({
-        id: walletId,
         owner_id: developer.id,
         name,
+        email: agentEmailFromName(name),
         country,
         currency,
-        payment_methods: paymentMethods ?? [],
-        spending_policy: spendingPolicy ?? defaultPolicy,
-        api_key: walletApiKey,
+        daily_cap: dailyCap,
+        max_per_tx: maxPerTx,
+        payment_methods: methods,
         status: "active",
       })
-      .select()
+      .select(
+        "id, name, country, currency, status, daily_cap, max_per_tx, payment_methods, kyc_tier, kyc_status, created_at",
+      )
       .single();
 
     if (error) {
@@ -185,21 +192,25 @@ Deno.serve(async (req) => {
       });
     }
 
+    const policy = spendingPolicyFromRow(data);
+
     return new Response(
       JSON.stringify({
         walletId: data.id,
-        apiKey: walletApiKey,
-        status: "active",
-        name,
-        country,
-        currency,
-        paymentMethods: data.payment_methods,
-        spendingPolicy: data.spending_policy,
+        status: data.status,
+        name: data.name,
+        country: data.country,
+        currency: data.currency,
+        paymentMethods: data.payment_methods ?? methods,
+        spendingPolicy: policy,
+        kycTier: data.kyc_tier,
+        kycStatus: data.kyc_status,
+        createdAt: data.created_at,
       }),
       { status: 201, headers: { ...corsHeaders, ...rlHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
+    return new Response(JSON.stringify({ error: (err as Error).message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
