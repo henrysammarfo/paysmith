@@ -79,6 +79,27 @@
   }
 }
 
+/* Landing: cinematic look locked — theme only affects buttons + footer */
+.landing-canvas {
+  --foreground: 0 0% 100%;
+  --muted-foreground: 0 0% 72%;
+  --card-foreground: 0 0% 100%;
+  --border: 0 0% 100% / 0.18;
+  color: hsl(var(--foreground));
+}
+
+.landing-canvas .liquid-glass {
+  color: hsl(var(--foreground));
+}
+
+.landing-canvas .landing-btn-ghost {
+  color: hsl(var(--foreground));
+}
+
+.landing-canvas code {
+  color: hsl(var(--foreground));
+}
+
 /* Liquid Glass Effect */
 .liquid-glass {
   background: rgba(255, 255, 255, 0.01);

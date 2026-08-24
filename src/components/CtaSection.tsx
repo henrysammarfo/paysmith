@@ -3,6 +3,20 @@ import { Link } from "react-router-dom";
 import { Play } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const CORRIDORS = [
+  { value: "GH", label: "Ghana" },
+  { value: "NG", label: "Nigeria" },
+  { value: "KE", label: "Kenya" },
+  { value: "ZA", label: "South Africa" },
+] as const;
 
 const CtaSection = () => {
   const [email, setEmail] = useState("");
@@ -49,8 +63,8 @@ const CtaSection = () => {
         </h2>
         <p className="text-muted-foreground text-base sm:text-lg mb-10 max-w-xl mx-auto">
           Join the waitlist for a sandbox API key — install{" "}
-          <code className="text-xs bg-secondary/50 px-1 rounded">@paysmithhq/sdk</code>{" "}
-          anytime; calls need <code className="text-xs bg-secondary/50 px-1 rounded">ps_test_…</code> from us.
+          <code className="text-xs bg-white/10 px-1.5 py-0.5 rounded">@paysmithhq/sdk</code>{" "}
+          anytime; calls need <code className="text-xs bg-white/10 px-1.5 py-0.5 rounded">ps_test_…</code> from us.
         </p>
 
         <form
@@ -63,23 +77,31 @@ const CtaSection = () => {
             placeholder="you@company.com"
             value={email}
             onChange={(ev) => setEmail(ev.target.value)}
-            className="flex-1 rounded-full liquid-glass px-5 py-3 text-sm bg-transparent outline-none border border-border/40"
+            className="flex-1 min-w-0 rounded-full liquid-glass px-5 py-3 text-sm bg-transparent outline-none border border-white/20"
           />
-          <select
-            value={corridor}
-            onChange={(ev) => setCorridor(ev.target.value)}
-            className="rounded-full liquid-glass px-4 py-3 text-sm bg-transparent border border-border/40"
-            aria-label="Primary corridor"
-          >
-            <option value="GH">Ghana</option>
-            <option value="NG">Nigeria</option>
-            <option value="KE">Kenya</option>
-            <option value="ZA">South Africa</option>
-          </select>
+          <Select value={corridor} onValueChange={setCorridor}>
+            <SelectTrigger
+              aria-label="Primary corridor"
+              className="h-auto w-full sm:w-[9.5rem] shrink-0 rounded-full liquid-glass px-4 py-3 text-sm bg-transparent border border-white/20 shadow-none focus:ring-0 focus:ring-offset-0"
+            >
+              <SelectValue placeholder="Country" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl border-white/15 bg-neutral-950/95 text-white backdrop-blur-xl">
+              {CORRIDORS.map(({ value, label }) => (
+                <SelectItem
+                  key={value}
+                  value={value}
+                  className="text-sm focus:bg-white/10 focus:text-white"
+                >
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <button
             type="submit"
             disabled={loading}
-            className="rounded-full font-medium bg-primary text-primary-foreground px-6 py-3 hover:bg-primary/80 transition-colors text-sm disabled:opacity-60"
+            className="shrink-0 rounded-full font-medium bg-primary text-primary-foreground px-6 py-3 hover:bg-primary/80 transition-colors text-sm disabled:opacity-60"
           >
             {loading ? "Joining…" : "Join waitlist"}
           </button>
@@ -95,7 +117,7 @@ const CtaSection = () => {
           </Link>
           <Link
             to="/docs"
-            className="flex items-center gap-2 rounded-full font-medium liquid-glass px-8 py-3"
+            className="landing-btn-ghost flex items-center gap-2 rounded-full font-medium liquid-glass px-8 py-3"
           >
             Read the Docs
           </Link>

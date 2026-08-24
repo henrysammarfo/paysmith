@@ -33,7 +33,8 @@ const Index = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden bg-background">
+    <div className="relative min-h-screen w-full overflow-x-hidden">
+      <div className="landing-canvas relative">
       {/* Background Video */}
       <video
         autoPlay
@@ -44,8 +45,8 @@ const Index = () => {
         src={VIDEO_URL}
       />
 
-      {/* Video darkening overlay for text readability */}
-      <div className="fixed inset-0 z-[1] bg-background/40" />
+      {/* Fixed dark overlay — not tied to light/dark theme */}
+      <div className="fixed inset-0 z-[1] bg-black/45 pointer-events-none" aria-hidden />
 
       {/* Bottom Blur Overlay */}
       <div
@@ -133,7 +134,7 @@ const Index = () => {
                 : "opacity-0 pointer-events-none"
             }`}
           >
-            <div className="absolute inset-0 bg-background/98 backdrop-blur-2xl" />
+            <div className="absolute inset-0 bg-black/92 backdrop-blur-2xl" />
             <div className="relative z-10 flex flex-col h-full px-6 pt-24 pb-12">
               <div className="flex-1 flex flex-col justify-center gap-2">
                 {NAV_LINKS.map((link, i) => {
@@ -238,7 +239,7 @@ const Index = () => {
                   </Link>
                   <Link
                     to="/docs"
-                    className="animate-blur-fade-up flex items-center gap-2 rounded-full font-medium liquid-glass px-6 sm:px-8 py-2.5 sm:py-3 text-sm sm:text-base"
+                    className="animate-blur-fade-up landing-btn-ghost flex items-center gap-2 rounded-full font-medium liquid-glass px-6 sm:px-8 py-2.5 sm:py-3 text-sm sm:text-base"
                     style={{ animationDelay: "700ms" }}
                   >
                     View Docs
@@ -261,6 +262,7 @@ const Index = () => {
       <MoatSection />
       <SectionDivider />
       <CtaSection />
+      </div>
       <Footer />
     </div>
   );
