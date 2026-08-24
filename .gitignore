@@ -39,3 +39,5 @@ packages/*/dist/
 
 # Rust / Soroban
 contracts/**/target/
+.vercel
+.env*
