@@ -318,3 +318,8 @@
 - Created Vercel project `teamtitanlink/paysmith` linked to GitHub; set `VITE_SUPABASE_*` env; production alias **https://paysmith-eight.vercel.app** (redeploy Ready).
 - Edge functions already live on Supabase `hkngxtrqhnkzkbqgqbjk` (no re-deploy needed this turn).
 - Added `.vercelignore` to avoid multi-GB CLI uploads.
+## 2026-08-24 — Waitlist email via tryopal.asia (Resend)
+
+- Verified Resend domain: tryopal.asia (status verified)
+- Set Edge secret RESEND_FROM=Paysmith <paysmith@tryopal.asia>
+- waitlist-join emailSent PASS for patrickkesh90@gmail.com (duplicate resend)
