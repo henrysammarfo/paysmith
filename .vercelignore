@@ -1,0 +1,16 @@
+node_modules
+packages/*/node_modules
+packages/*/dist
+dist
+contracts/**/target
+.tmp*
+.tmp-smoke.json
+.env
+.env.*
+!.env.example
+.cursor/mcp.json
+supabase/.temp
+memory/SMOKE_*.json
+memory/*_LIVE.json
+*.log
+.git

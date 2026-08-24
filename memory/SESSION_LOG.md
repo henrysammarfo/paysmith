@@ -310,3 +310,11 @@
 - MCP `@modelcontextprotocol/sdk` built locally (0.2.3)
 - Playwright `e2e/dashboard.spec.ts` · `docs/PEN_TEST_STATUS.md` · `RAILS_DARAJA_MTN.md`
 - T2: waitlist copy, `BUILDER_CIRCLE_NG.md`, thread + traction updates (0 waitlist · 21 wallets · 34 txs · 7 Stellar)
+
+## 2026-08-24 — Commit, push main, Vercel deploy
+
+- Commit `806ae72` on `main` (142 files): testnet rails, agent SDK/CLI/MCP, Daraja/MTN, Soroban, T2 packs. `.env` not committed.
+- Pushed `origin/main`.
+- Created Vercel project `teamtitanlink/paysmith` linked to GitHub; set `VITE_SUPABASE_*` env; production alias **https://paysmith-eight.vercel.app** (redeploy Ready).
+- Edge functions already live on Supabase `hkngxtrqhnkzkbqgqbjk` (no re-deploy needed this turn).
+- Added `.vercelignore` to avoid multi-GB CLI uploads.
