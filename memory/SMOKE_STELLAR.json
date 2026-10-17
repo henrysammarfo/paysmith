@@ -1,11 +1,11 @@
 {
   "summary": {
-    "http_ok": false,
-    "provider_stellar": false,
-    "status_settled": false,
-    "hash": null,
-    "ledger_debited": false,
-    "verdict": "FAIL"
+    "http_ok": true,
+    "provider_stellar": true,
+    "status_settled": true,
+    "hash": "011f08c38ba3588d1489f0979e0ab07048340781a7a16e7ba5fa41778068a1b6",
+    "ledger_debited": true,
+    "verdict": "PASS"
   },
   "steps": [
     {
@@ -14,14 +14,14 @@
         "credit_alphanum4:18.0000000",
         "native:9997.5954404"
       ],
-      "at": "2026-10-17T10:05:17.605Z"
+      "at": "2026-10-17T11:03:02.236Z"
     },
     {
       "name": "destination",
       "data": {
-        "public": "GBFHOVN4BAIHT53HJR5K6LYNXR4JYKHZANUQICFPQFPNP6SO32NSTUXX"
+        "public": "GAXAABN2LFQ5THBYG47J352F3PXAY6RP42HUXRHFMP336BAR2VG6MZDW"
       },
-      "at": "2026-10-17T10:05:37.381Z"
+      "at": "2026-10-17T11:03:13.233Z"
     },
     {
       "name": "ledger_funded",
@@ -29,34 +29,47 @@
         "id": "1c7173b2-34f5-4419-adba-3600ea60ef13",
         "balance_xlm": 10
       },
-      "at": "2026-10-17T10:05:38.950Z"
+      "at": "2026-10-17T11:03:15.176Z"
     },
     {
       "name": "pay_response",
       "data": {
-        "status": 503,
-        "body": "{\"error\":\"Soroban policy check unavailable\",\"detail\":\"Bad union switch: 1\",\"sorobanPolicyContractId\":\"CAHFJKHA7O75475ZI4Y4C6W6PIAR5MZUSNDKPNKADJ7KEHR7XNSTGMBE\",\"hint\":\"Set STELLAR_SOROBAN_SOFT_FAIL=1 only for emergency off-chain-only\"}"
+        "status": 200,
+        "body": "{\"txId\":\"011f08c38ba3588d1489f0979e0ab07048340781a7a16e7ba5fa41778068a1b6\",\"status\":\"settled\",\"provider\":\"stellar\",\"settledAt\":\"2026-10-17T11:03:30.142Z\",\"fee\":\"0.00 XLM\",\"amount\":0.5,\"currency\":\"XLM\",\"method\":\"crypto\",\"recipient\":\"GAXAABN2LFQ5THBYG47J352F3PXAY6RP42HUXRHFMP336BAR2VG6MZDW\",\"stellarTxHash\":\"011f08c38ba3588d1489f0979e0ab07048340781a7a16e7ba5fa41778068a1b6\",\"policyEnforcement\":\"soroban-recorded+off-chain\",\"sorobanPolicyContractId\":\"CAXYX34FEXUNWELLIFFH24UFUGOVPITBA5BBGTZNWR23OWB5L46VNKUW\"}"
       },
-      "at": "2026-10-17T10:05:41.863Z"
+      "at": "2026-10-17T11:03:27.374Z"
+    },
+    {
+      "name": "explorer",
+      "data": "https://stellar.expert/explorer/testnet/tx/011f08c38ba3588d1489f0979e0ab07048340781a7a16e7ba5fa41778068a1b6",
+      "at": "2026-10-17T11:03:27.374Z"
+    },
+    {
+      "name": "horizon_tx",
+      "data": {
+        "status": 200,
+        "ok": true
+      },
+      "at": "2026-10-17T11:03:28.367Z"
     },
     {
       "name": "ledger_after",
       "data": {
-        "balance_xlm": 10
+        "balance_xlm": 9.5
       },
-      "at": "2026-10-17T10:05:42.154Z"
+      "at": "2026-10-17T11:03:28.636Z"
     },
     {
       "name": "summary",
       "data": {
-        "http_ok": false,
-        "provider_stellar": false,
-        "status_settled": false,
-        "hash": null,
-        "ledger_debited": false,
-        "verdict": "FAIL"
+        "http_ok": true,
+        "provider_stellar": true,
+        "status_settled": true,
+        "hash": "011f08c38ba3588d1489f0979e0ab07048340781a7a16e7ba5fa41778068a1b6",
+        "ledger_debited": true,
+        "verdict": "PASS"
       },
-      "at": "2026-10-17T10:05:42.155Z"
+      "at": "2026-10-17T11:03:28.636Z"
     }
   ]
 }

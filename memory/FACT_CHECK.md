@@ -37,5 +37,5 @@ God of Prompt marketing/SEO/sales patterns adapted in `memory/GROWTH_WAITLIST_10
 - Contract **v3 redeployed** testnet: `CAXYX34FEXUNWELLIFFH24UFUGOVPITBA5BBGTZNWR23OWB5L46VNKUW` (wasm `f3870fa4…5439e9c`).
 - On-chain `try_spend` verified: https://stellar.expert/explorer/testnet/tx/176706a7ed504f18890182e904dad54901b2e3f0ef1861e1fc112ed1c1440a7d
 - `cargo test` spending-policy ✅ 4/4 · app vitest ✅ 21 · sdk vitest ✅ 11 · `smoke:agent-stellar` ✅
-- Edge secret set via CLI: ❌ invalid `SUPABASE_ACCESS_TOKEN` — pay source remaps legacy contract IDs; redeploy `pay` after `supabase login`.
+- Edge secret + `pay` redeployed 2026-10-17 with v3 contract ID; `smoke:stellar` PASS (settled).
 - Not mainnet · not pen-tested · Relayer not hosted.

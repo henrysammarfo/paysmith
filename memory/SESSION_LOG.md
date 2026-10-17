@@ -347,3 +347,9 @@
 - Criteria peers refreshed (NG SCF #44, Instaward handbook); `INSTAWARD_30_DAY_PLAN` + `STELLAR14_FINAL_SUBMISSION.md`.
 - Smokes: `smoke:agent-stellar` PASS; `smoke:stellar`/`stress` saw Cloudflare socket flakes — retry on stage network.
 - Blocker: Supabase CLI access token invalid — cannot secrets-set / functions-deploy until `supabase login`.
+
+## 2026-10-17 — Edge secret + pay redeploy (fresh PAT)
+
+- Set `STELLAR_SOROBAN_POLICY_CONTRACT_ID=CAXYX34F…NKUW`; deployed `pay` (`--no-verify-jwt`).
+- `npm run smoke:stellar` → settled / PASS.
+- Token stored in local `.env` only (not committed).
