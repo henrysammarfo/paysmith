@@ -337,3 +337,13 @@
 - App: `/stellar` Freighter connect demo for judges.
 - Docs: `docs/STELLAR14_ECOSYSTEM.md`, `memory/STELLAR14_DEMO_DAY_FORM.md`, Instaward sprint refresh.
 - Repo was private — must flip public for form.
+
+## 2026-10-17 — Implement stack, deploy, tests, submission
+
+- Soroban SDK → **29.0.1**; `stellar contract build` + deploy → `CAXYX34F…L46VNKUW`.
+- On-chain `try_spend` success (explorer tx `176706a7…`).
+- `cargo test` 4/4 (Windows: crate-type `rlib` for host tests; stellar build forces cdylib).
+- SDK: `OpenZeppelinRelayerClient` + stellar/relayer unit tests; Edge pay pin 14.2.0 + legacy ID remap.
+- Criteria peers refreshed (NG SCF #44, Instaward handbook); `INSTAWARD_30_DAY_PLAN` + `STELLAR14_FINAL_SUBMISSION.md`.
+- Smokes: `smoke:agent-stellar` PASS; `smoke:stellar`/`stress` saw Cloudflare socket flakes — retry on stage network.
+- Blocker: Supabase CLI access token invalid — cannot secrets-set / functions-deploy until `supabase login`.

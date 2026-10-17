@@ -1,30 +1,57 @@
 #!/usr/bin/env pwsh
 # Build + deploy spending-policy to Stellar testnet.
-$ErrorActionPreference = "Stop"
+# Stellar CLI writes progress to stderr; do not treat that as terminating errors.
+$ErrorActionPreference = "Continue"
 $env:Path = "C:\msys64\mingw64\bin;$env:USERPROFILE\.cargo\bin;C:\Program Files (x86)\Stellar CLI;" + $env:Path
 
 $repo = Split-Path $PSScriptRoot -Parent
 $contractDir = Join-Path $repo "contracts\spending-policy"
 Push-Location $contractDir
 
-$keys = stellar keys ls 2>&1 | Out-String
-if ($keys -notmatch "paysmith-deploy") {
-  stellar keys generate paysmith-deploy --network testnet --fund
+function Invoke-StellarText {
+  param([Parameter(Mandatory)][string[]]$Args)
+  $prev = $ErrorActionPreference
+  $ErrorActionPreference = "Continue"
+  $out = & stellar @Args 2>&1 | ForEach-Object { "$_" }
+  $ErrorActionPreference = $prev
+  return ($out -join "`n")
 }
 
-stellar contract build
-$wasm = Join-Path $contractDir "target\wasm32v1-none\release\spending_policy.wasm"
-if (-not (Test-Path $wasm)) { Write-Error "WASM missing: $wasm" }
+$keys = Invoke-StellarText @("keys", "ls")
+if ($keys -notmatch "paysmith-deploy") {
+  Invoke-StellarText @("keys", "generate", "paysmith-deploy", "--network", "testnet", "--fund") | Write-Host
+}
 
-$deployOut = stellar contract deploy --wasm $wasm --source-account paysmith-deploy --network testnet --alias paysmith-spending-policy 2>&1 | Out-String
+$buildOut = Invoke-StellarText @("contract", "build")
+Write-Host $buildOut
+$wasm = Join-Path $contractDir "target\wasm32v1-none\release\spending_policy.wasm"
+if (-not (Test-Path $wasm)) { throw "WASM missing: $wasm" }
+
+$deployOut = Invoke-StellarText @(
+  "contract", "deploy",
+  "--wasm", $wasm,
+  "--source-account", "paysmith-deploy",
+  "--network", "testnet",
+  "--alias", "paysmith-spending-policy"
+)
 Write-Host $deployOut
 $cid = [regex]::Match($deployOut, "C[A-Z0-9]{55}").Value
-if (-not $cid) { Write-Error "Could not parse contract id" }
+if (-not $cid) { throw "Could not parse contract id from deploy output" }
 Write-Host "CONTRACT_ID=$cid"
 
 $pol = Join-Path $env:TEMP "paysmith-policy.json"
 [System.IO.File]::WriteAllText($pol, '{ "daily_limit": "1000", "max_single_tx": "200" }')
-stellar contract invoke --id $cid --source-account paysmith-deploy --network testnet -- check_spend --policy-file-path $pol --amount 50 --spent_today 100
+$invokeOut = Invoke-StellarText @(
+  "contract", "invoke",
+  "--id", $cid,
+  "--source-account", "paysmith-deploy",
+  "--network", "testnet",
+  "--", "check_spend",
+  "--policy-file-path", $pol,
+  "--amount", "50",
+  "--spent_today", "100"
+)
+Write-Host $invokeOut
 
 $envFile = Join-Path $repo ".env"
 if (Test-Path $envFile) {

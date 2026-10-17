@@ -27,3 +27,20 @@ export {
 } from "./types.js";
 
 export { Paysmith as default } from "./client.js";
+export {
+  PAYSMITH_SOROBAN_POLICY_TESTNET,
+  STELLAR_TESTNET_HORIZON,
+  STELLAR_TESTNET_RPC,
+  getStellarConfig,
+  stellarLabContractUrl,
+  smartAccountKitScaffold,
+  type StellarNetworkConfig,
+  type SmartAccountRoadmapConfig,
+} from "./stellar.js";
+export {
+  OpenZeppelinRelayerClient,
+  createRelayerFromEnv,
+  type RelayerSubmitRequest,
+  type RelayerSubmitResult,
+  type OpenZeppelinRelayerClientOptions,
+} from "./relayer.js";

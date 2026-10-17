@@ -20,7 +20,7 @@ declare global {
 }
 
 const CONTRACT_ID =
-  "CAHFJKHA7O75475ZI4Y4C6W6PIAR5MZUSNDKPNKADJ7KEHR7XNSTGMBE";
+  "CAXYX34FEXUNWELLIFFH24UFUGOVPITBA5BBGTZNWR23OWB5L46VNKUW";
 const LAB_URL = `https://lab.stellar.org/smart-contracts/contract-explorer?network=testnet&contractId=${CONTRACT_ID}`;
 
 function getFreighter(): FreighterApi | null {

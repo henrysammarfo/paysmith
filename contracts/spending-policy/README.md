@@ -4,9 +4,10 @@
 
 | | |
 |--|--|
-| Contract ID | `CAHFJKHA7O75475ZI4Y4C6W6PIAR5MZUSNDKPNKADJ7KEHR7XNSTGMBE` |
+| Contract ID | `CAXYX34FEXUNWELLIFFH24UFUGOVPITBA5BBGTZNWR23OWB5L46VNKUW` |
 | Network | **testnet** |
-| Lab | [Contract explorer](https://lab.stellar.org/smart-contracts/contract-explorer?network=testnet&contractId=CAHFJKHA7O75475ZI4Y4C6W6PIAR5MZUSNDKPNKADJ7KEHR7XNSTGMBE) |
+| Lab | [Contract explorer](https://lab.stellar.org/r/testnet/contract/CAXYX34FEXUNWELLIFFH24UFUGOVPITBA5BBGTZNWR23OWB5L46VNKUW) |
+| Wasm hash | `f3870fa4612ce74276379d21345159e3ba8a826175b0219a9f9eef39c5439e9c` |
 
 ## Functions
 

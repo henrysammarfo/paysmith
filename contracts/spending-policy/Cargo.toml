@@ -1,17 +1,19 @@
 [package]
 name = "spending-policy"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 publish = false
 
 [lib]
-crate-type = ["cdylib", "rlib"]
+# rlib for host `cargo test` (Windows DLL ordinal limit with Soroban SDK 29).
+# `stellar contract build` forces cdylib via rustc --crate-type=cdylib.
+crate-type = ["rlib"]
 
 [dependencies]
-soroban-sdk = "22.0.0"
+soroban-sdk = "29.0.1"
 
 [dev-dependencies]
-soroban-sdk = { version = "22.0.0", features = ["testutils"] }
+soroban-sdk = { version = "29.0.1", features = ["testutils"] }
 
 [profile.release]
 opt-level = "z"
@@ -26,5 +28,3 @@ lto = true
 [profile.release-with-logs]
 inherits = "release"
 debug-assertions = true
-
-

@@ -26,6 +26,7 @@
     "smoke:daraja": "node scripts/smoke-daraja.mjs",
     "smoke:mtn": "node scripts/smoke-mtn.mjs",
     "smoke:npm": "node scripts/smoke-npm-packages.mjs",
+    "smoke:agent-stellar": "node scripts/smoke-agent-stellar-e2e.mjs",
     "setup:cursor-mcp": "node scripts/setup-cursor-mcp.mjs",
     "traction:query": "node scripts/query-traction.mjs",
     "research:tavily": "node scripts/research-tavily.mjs",

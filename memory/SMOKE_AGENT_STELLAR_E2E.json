@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-17T10:03:16.755Z",
+  "ok": true,
+  "walletId": "ee83811c-b3c9-4f85-a410-88b76aa466e1",
+  "create": {
+    "walletId": "ee83811c-b3c9-4f85-a410-88b76aa466e1",
+    "status": "active",
+    "name": "stellar14-agent-mvc8aq21",
+    "country": "GH",
+    "currency": "GHS",
+    "paymentMethods": [],
+    "spendingPolicy": {
+      "dailyLimit": 500,
+      "maxSingleTx": 100,
+      "requireApprovalAbove": 100
+    },
+    "kycTier": "tier0",
+    "kycStatus": "unverified",
+    "createdAt": "2026-10-17T10:03:18.453622+00:00"
+  },
+  "balance": {
+    "walletId": "ee83811c-b3c9-4f85-a410-88b76aa466e1",
+    "name": "stellar14-agent-mvc8aq21",
+    "country": "GH",
+    "currency": "GHS",
+    "status": "active",
+    "balances": {
+      "ghs": 0,
+      "ngn": 0,
+      "usd": 0,
+      "usdc": 0,
+      "kes": 0,
+      "xlm": 0
+    },
+    "paymentMethods": [],
+    "spendingPolicy": {
+      "dailyLimit": 500,
+      "maxSingleTx": 100,
+      "requireApprovalAbove": 100
+    },
+    "kycTier": "tier0",
+    "kycStatus": "unverified",
+    "createdAt": "2026-10-17T10:03:18.453622+00:00"
+  },
+  "stellar": {
+    "policyContract": "CAXYX34FEXUNWELLIFFH24UFUGOVPITBA5BBGTZNWR23OWB5L46VNKUW",
+    "freighterDemo": "https://paysmith-eight.vercel.app/stellar",
+    "lab": "https://lab.stellar.org/smart-contracts/contract-explorer?network=testnet&contractId=CAXYX34FEXUNWELLIFFH24UFUGOVPITBA5BBGTZNWR23OWB5L46VNKUW"
+  },
+  "note": "Pay XLM/USDC via smoke:stellar / smoke:stellar-usdc when treasury funded"
+}

@@ -48,11 +48,11 @@ By 4 October 2026 (last major commit `56c39db` / earlier `806ae72` ship): Paysta
 Last pre-window commit: https://github.com/henrysammarfo/paysmith/commit/56c39db (Aug 2026 era) — product live on testnet; Stellar 14 work is the Oct upgrade + Demo Day pack.
 
 **What you built during Stellar 14 (5–17 Oct):**
-- Soroban policy **v3 surface**: `init_admin`, `set_wallet_policy`, `get_wallet_policy`; richer `spend` events; stored policy overrides call-site caps
-- Freighter connect demo page (`/stellar`) for in-person Demo Day
-- Ecosystem map aligning OpenZeppelin Relayer/Contracts, Smart Account Kit, Stellar Lab, Raven MCP (`docs/STELLAR14_ECOSYSTEM.md`)
-- Demo Day submission pack + 30-day Instaward scope refresh (`memory/STELLAR14_DEMO_DAY_FORM.md`, `memory/INSTAWARD_SPRINT.md`)
-- Docs/README contract function table updated for judges
+- Soroban policy **v3** redeployed on testnet (SDK 29): `init_admin`, `set_wallet_policy`, `get_wallet_policy`, `try_spend`
+- Freighter connect demo (`/stellar`) + Lab explorer link for judges
+- `@paysmithhq/sdk` Stellar helpers + **OZ Relayer client** + Smart Account Kit scaffold
+- Ecosystem map + Instaward A→Z + sentiment-based 30-day plan (`docs/STELLAR14_ECOSYSTEM.md`, `memory/INSTAWARD_*`)
+- Agent↔Stellar e2e smoke (`npm run smoke:agent-stellar`)
 
 **Stellar and Soroban components used:** (tick)
 - [x] Soroban smart contracts (Rust)
@@ -69,7 +69,7 @@ Last pre-window commit: https://github.com/henrysammarfo/paysmith/commit/56c39db
 
 **Stellar details:**  
 - **Network:** testnet  
-- **Contract ID:** `CAHFJKHA7O75475ZI4Y4C6W6PIAR5MZUSNDKPNKADJ7KEHR7XNSTGMBE`  
+- **Contract ID:** `CAXYX34FEXUNWELLIFFH24UFUGOVPITBA5BBGTZNWR23OWB5L46VNKUW`  
 - **How Stellar is used:** Agent `/pay` settles treasury USDC/XLM via Horizon; Soroban policy contract enforces daily/`max_single_tx` caps on-chain (`try_spend`); Freighter shows judge pubkey; Lab for contract explorer. Fiat last-mile via Paystack/Flutterwave/Daraja/MTN sandboxes.
 
 ---
@@ -108,7 +108,7 @@ Last pre-window commit: https://github.com/henrysammarfo/paysmith/commit/56c39db
 **Demo link:**  
 https://paysmith-eight.vercel.app/stellar  
 https://paysmith-eight.vercel.app/#waitlist  
-https://lab.stellar.org/smart-contracts/contract-explorer?network=testnet&contractId=CAHFJKHA7O75475ZI4Y4C6W6PIAR5MZUSNDKPNKADJ7KEHR7XNSTGMBE  
+https://lab.stellar.org/r/testnet/contract/CAXYX34FEXUNWELLIFFH24UFUGOVPITBA5BBGTZNWR23OWB5L46VNKUW  
 *(Add Loom backup before Demo Day)*
 
 ---

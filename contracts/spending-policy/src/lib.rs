@@ -197,9 +197,14 @@ mod test {
         let wallet = String::from_str(&env, "wallet-2");
         let day = 20_001u32;
 
-        client.try_spend(&wallet, &policy(), &900, &day);
-        let res = client.try_try_spend(&wallet, &policy(), &101, &day);
-        assert!(matches!(res, Ok(Err(PolicyError::OverDailyLimit)) | Err(_)));
+        // Max single tx is 200 — fill daily with legal chunks, then overflow.
+        client.try_spend(&wallet, &policy(), &200, &day);
+        client.try_spend(&wallet, &policy(), &200, &day);
+        client.try_spend(&wallet, &policy(), &200, &day);
+        client.try_spend(&wallet, &policy(), &200, &day);
+        client.try_spend(&wallet, &policy(), &200, &day); // 1000 / 1000
+        let res = client.try_try_spend(&wallet, &policy(), &1, &day);
+        assert!(res.is_err(), "expected over-daily deny, got {:?}", res);
     }
 
     #[test]
@@ -216,7 +221,7 @@ mod test {
         };
         client.set_wallet_policy(&wallet, &tight);
         let over = client.try_try_spend(&wallet, &policy(), &60, &day);
-        assert!(matches!(over, Ok(Err(PolicyError::OverSingleTxLimit)) | Err(_)));
+        assert!(over.is_err(), "expected over-single deny, got {:?}", over);
         client.try_spend(&wallet, &policy(), &40, &day);
         assert_eq!(client.get_spent(&wallet, &day), 40);
     }

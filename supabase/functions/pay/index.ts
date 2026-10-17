@@ -5,6 +5,21 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-api-key, idempotency-key",
 };
 
+/** Stellar 14 Demo Day redeploy (2026-10-17). Remap pre-v3 IDs if Edge secret not refreshed. */
+const SOROBAN_POLICY_V3 =
+  "CAXYX34FEXUNWELLIFFH24UFUGOVPITBA5BBGTZNWR23OWB5L46VNKUW";
+const SOROBAN_POLICY_LEGACY = new Set([
+  "CAHFJKHA7O75475ZI4Y4C6W6PIAR5MZUSNDKPNKADJ7KEHR7XNSTGMBE",
+  "CAOJF27FUDJB3IAH27QYDE6HVLKC7R7VCUBAZ64Y3VLKIQDQ2WTMW5ZY",
+]);
+
+function resolveSorobanPolicyContractId(): string {
+  const raw = (Deno.env.get("STELLAR_SOROBAN_POLICY_CONTRACT_ID") || "").trim();
+  if (!raw.startsWith("C")) return SOROBAN_POLICY_V3;
+  if (SOROBAN_POLICY_LEGACY.has(raw)) return SOROBAN_POLICY_V3;
+  return raw;
+}
+
 // ── In-memory rate limiter (per isolate) ───────────────────────────
 const RATE_LIMIT = 100; // requests per minute per key
 const RATE_WINDOW = 60_000; // 60 seconds
@@ -467,9 +482,9 @@ async function routeStellarPayment(opts: {
     // Prefer npm: for Supabase Edge; esm.sh as fallback
     let StellarSdk: any;
     try {
-      StellarSdk = await import("npm:@stellar/stellar-sdk@13.1.0");
+      StellarSdk = await import("npm:@stellar/stellar-sdk@14.2.0");
     } catch {
-      StellarSdk = await import("https://esm.sh/@stellar/stellar-sdk@13.1.0");
+      StellarSdk = await import("https://esm.sh/@stellar/stellar-sdk@14.2.0");
     }
     const {
       Keypair,
@@ -778,7 +793,7 @@ async function enforceSorobanPolicy(opts: {
   | { status: "denied"; contractId: string; code: number; error: string }
   | { status: "rpc_error"; contractId: string; detail: string }
 > {
-  const contractId = (Deno.env.get("STELLAR_SOROBAN_POLICY_CONTRACT_ID") || "").trim();
+  const contractId = resolveSorobanPolicyContractId();
   if (!contractId.startsWith("C")) {
     return { status: "skipped", reason: "no_contract_id" };
   }
@@ -798,9 +813,9 @@ async function enforceSorobanPolicy(opts: {
   try {
     let StellarSdk: any;
     try {
-      StellarSdk = await import("npm:@stellar/stellar-sdk@13.1.0");
+      StellarSdk = await import("npm:@stellar/stellar-sdk@14.2.0");
     } catch {
-      StellarSdk = await import("https://esm.sh/@stellar/stellar-sdk@13.1.0");
+      StellarSdk = await import("https://esm.sh/@stellar/stellar-sdk@14.2.0");
     }
     const {
       Keypair,
@@ -911,10 +926,15 @@ async function enforceSorobanPolicy(opts: {
       detail: errMsg.slice(0, 400),
     };
   } catch (e) {
+    const detail = e instanceof Error ? e.message : String(e);
+    // XDR/SDK skew (e.g. "Bad union switch") is not a spending-policy deny.
+    if (/bad union switch/i.test(detail) && (Deno.env.get("STELLAR_SOROBAN_SOFT_FAIL") || "").trim() === "1") {
+      return { status: "skipped", reason: `xdr_skew:${detail.slice(0, 80)}` };
+    }
     return {
       status: "rpc_error",
       contractId,
-      detail: e instanceof Error ? e.message : String(e),
+      detail,
     };
   }
 }
@@ -926,7 +946,7 @@ async function recordSorobanSpend(opts: {
   maxSingleTx: number;
   amount: number;
 }): Promise<{ ok: boolean; detail?: string }> {
-  const contractId = (Deno.env.get("STELLAR_SOROBAN_POLICY_CONTRACT_ID") || "").trim();
+  const contractId = resolveSorobanPolicyContractId();
   if (!contractId.startsWith("C")) return { ok: false, detail: "no_contract" };
   const secret = Deno.env.get("STELLAR_TREASURY_SECRET");
   if (!secret) return { ok: false, detail: "no_secret" };
@@ -944,9 +964,9 @@ async function recordSorobanSpend(opts: {
   try {
     let StellarSdk: any;
     try {
-      StellarSdk = await import("npm:@stellar/stellar-sdk@13.1.0");
+      StellarSdk = await import("npm:@stellar/stellar-sdk@14.2.0");
     } catch {
-      StellarSdk = await import("https://esm.sh/@stellar/stellar-sdk@13.1.0");
+      StellarSdk = await import("https://esm.sh/@stellar/stellar-sdk@14.2.0");
     }
     const {
       Keypair,
