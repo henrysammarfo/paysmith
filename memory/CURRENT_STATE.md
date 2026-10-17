@@ -1,7 +1,8 @@
 ﻿# Paysmith — Current State
 
-**Last updated:** 2026-10-17 (Stellar 14 Demo Day — deploy + tests)  
-**Supabase:** `hkngxtrqhnkzkbqgqbjk`
+**Last updated:** 2026-10-17 (launch checklist + Stellar 14)  
+**Supabase:** `hkngxtrqhnkzkbqgqbjk`  
+**Launch checklist:** `memory/LAUNCH_CHECKLIST_20.md` (20/20 addressed)
 
 ## Verified now
 - Rails: Paystack, Flutterwave, Stellar, Daraja (KES), MTN MoMo (sandbox)

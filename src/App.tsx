@@ -25,6 +25,10 @@ import WebhookLogs from "./pages/dashboard/WebhookLogs";
 import AdminMetrics from "./pages/dashboard/AdminMetrics";
 import ApiUsage from "./pages/dashboard/ApiUsage";
 import StellarDemo from "./pages/StellarDemo";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import { CookieConsent } from "./components/CookieConsent";
+import { Analytics } from "./components/Analytics";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +52,8 @@ const App = () => (
             <Route path="/stellar" element={<StellarDemo />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
             <Route
               path="/dashboard"
               element={
@@ -67,6 +73,8 @@ const App = () => (
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <CookieConsent />
+          <Analytics />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

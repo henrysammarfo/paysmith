@@ -40,6 +40,9 @@ const Index = () => {
         loop
         muted
         playsInline
+        preload="metadata"
+        poster="/og-image.png"
+        aria-label="Paysmith product atmosphere background"
         className="fixed inset-0 z-0 h-full w-full object-cover"
         src={VIDEO_URL}
       />
@@ -99,6 +102,9 @@ const Index = () => {
             <div className="flex items-center gap-2">
               <ThemeToggle />
               <button
+                type="button"
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={menuOpen}
                 className="animate-blur-fade-up flex lg:hidden items-center justify-center w-10 h-10 rounded-full liquid-glass relative z-[60]"
                 style={{ animationDelay: "350ms" }}
                 onClick={() => setMenuOpen((v) => !v)}
@@ -219,14 +225,14 @@ const Index = () => {
 
                 {/* Description */}
                 <p
-                  className="animate-blur-fade-up text-sm sm:text-lg md:text-xl text-foreground/70 mb-6 md:mb-12 max-w-2xl leading-relaxed"
+                  className="animate-blur-fade-up text-sm sm:text-lg md:text-xl text-foreground/85 mb-6 md:mb-12 max-w-2xl leading-relaxed"
                   style={{ animationDelay: "500ms" }}
                 >
                   Production-shaped API for agent wallets: MTN MoMo, bank transfers, and Stellar USDC on testnet — one integration before live KYB.
                 </p>
 
-                {/* CTA */}
-                <div className="flex flex-wrap gap-3 sm:gap-4">
+                {/* Single primary CTA — docs stay in nav */}
+                <div className="flex flex-wrap gap-3 sm:gap-4 items-center">
                   <a
                     href="#waitlist"
                     className="animate-blur-fade-up flex items-center gap-2 bg-primary text-primary-foreground rounded-full font-medium px-6 sm:px-8 py-2.5 sm:py-3 hover:bg-primary/80 transition-colors text-sm sm:text-base"
@@ -234,13 +240,12 @@ const Index = () => {
                   >
                     Join waitlist
                   </a>
-                  <Link
-                    to="/docs"
-                    className="animate-blur-fade-up landing-btn-ghost flex items-center gap-2 rounded-full font-medium liquid-glass px-6 sm:px-8 py-2.5 sm:py-3 text-sm sm:text-base"
+                  <span
+                    className="animate-blur-fade-up text-xs sm:text-sm text-foreground/65"
                     style={{ animationDelay: "700ms" }}
                   >
-                    View Docs
-                  </Link>
+                    Sandbox keys · testnet only
+                  </span>
                 </div>
               </div>
             </div>

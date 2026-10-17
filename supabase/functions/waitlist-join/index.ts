@@ -123,6 +123,13 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json();
+    // Honeypot — bots fill "website"; humans leave it empty
+    if (String(body.website ?? body.company ?? "").trim()) {
+      return new Response(JSON.stringify({ ok: true, duplicate: false }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     const email = String(body.email ?? "")
       .trim()
       .toLowerCase();

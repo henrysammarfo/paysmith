@@ -353,3 +353,11 @@
 - Set `STELLAR_SOROBAN_POLICY_CONTRACT_ID=CAXYX34F…NKUW`; deployed `pay` (`--no-verify-jwt`).
 - `npm run smoke:stellar` → settled / PASS.
 - Token stored in local `.env` only (not committed).
+
+## 2026-10-17 — Website launch 20-task checklist
+
+- Privacy `/privacy` + Terms `/terms`; footer broken `#` links fixed.
+- HSTS + security headers; cookie consent + Vercel Analytics (consent-gated).
+- OG compressed ~1.1MB→62KB; sitemap/robots; honeypot on waitlist-join.
+- Hero single CTA (Join waitlist); custom 404; frontend key assert (no sbp_/service_role).
+- Checklist: `memory/LAUNCH_CHECKLIST_20.md`.
