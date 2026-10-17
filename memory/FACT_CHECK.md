@@ -27,3 +27,11 @@ Waitlist **0** · wallets **21** · txs **34** · Stellar settles **7** (`TRACTI
 2. Off-chain ledger pre-check before on-chain `try_spend` — not single atomic flow
 3. In-memory rate limits; CORS `*`; no external pen test
 4. Rail + ledger not one atomic DB txn — reconcile + idempotency
+
+## Growth (2026-08-31)
+God of Prompt marketing/SEO/sales patterns adapted in `memory/GROWTH_WAITLIST_100.md`. Research via Tavily+WebFetch; TinyFish unavailable (no key in .env).
+
+## Stellar 14 (2026-10-17)
+- Demo Day form pack + Freighter page + Soroban policy admin/set_wallet_policy in source.
+- Ecosystem tools researched in `docs/STELLAR14_ECOSYSTEM.md`.
+- Contract ID (deployed): `CAHFJKHA7O75475ZI4Y4C6W6PIAR5MZUSNDKPNKADJ7KEHR7XNSTGMBE` — redeploy wasm for v3 funcs when CLI available.

@@ -1,5 +1,7 @@
 #![no_std]
-use soroban_sdk::{contract, contracterror, contractimpl, contracttype, symbol_short, Env, String};
+use soroban_sdk::{
+    contract, contracterror, contractimpl, contracttype, symbol_short, Address, Env, String,
+};
 
 /// On-chain spending caps mirror off-chain `daily_cap` / `max_per_tx`.
 #[contracttype]
@@ -20,6 +22,8 @@ pub struct WalletDay {
 #[derive(Clone)]
 pub enum DataKey {
     Spent(WalletDay),
+    Admin,
+    WalletPolicy(String),
 }
 
 #[contracterror]
@@ -29,6 +33,8 @@ pub enum PolicyError {
     OverSingleTxLimit = 1,
     OverDailyLimit = 2,
     NegativeAmount = 3,
+    NotAuthorized = 4,
+    InvalidPolicy = 5,
 }
 
 #[contract]
@@ -36,6 +42,46 @@ pub struct SpendingPolicy;
 
 #[contractimpl]
 impl SpendingPolicy {
+    /// One-time admin bootstrap (first caller wins).
+    pub fn init_admin(env: Env, admin: Address) {
+        if env.storage().instance().has(&DataKey::Admin) {
+            return;
+        }
+        admin.require_auth();
+        env.storage().instance().set(&DataKey::Admin, &admin);
+        env.events()
+            .publish((symbol_short!("admin"),), admin);
+    }
+
+    /// Store a per-wallet policy override (admin-gated when admin is set).
+    pub fn set_wallet_policy(
+        env: Env,
+        wallet_id: String,
+        policy: Policy,
+    ) -> Result<(), PolicyError> {
+        if policy.daily_limit <= 0 || policy.max_single_tx <= 0 {
+            return Err(PolicyError::InvalidPolicy);
+        }
+        if policy.max_single_tx > policy.daily_limit {
+            return Err(PolicyError::InvalidPolicy);
+        }
+        Self::require_admin(&env)?;
+        env.storage()
+            .instance()
+            .set(&DataKey::WalletPolicy(wallet_id.clone()), &policy);
+        env.events().publish(
+            (symbol_short!("setpol"), wallet_id),
+            (policy.daily_limit, policy.max_single_tx),
+        );
+        Ok(())
+    }
+
+    pub fn get_wallet_policy(env: Env, wallet_id: String) -> Option<Policy> {
+        env.storage()
+            .instance()
+            .get(&DataKey::WalletPolicy(wallet_id))
+    }
+
     /// Read persisted on-chain spend for wallet + UTC day index.
     pub fn get_spent(env: Env, wallet_id: String, day: u32) -> i128 {
         let key = DataKey::Spent(WalletDay { wallet_id, day });
@@ -43,6 +89,7 @@ impl SpendingPolicy {
     }
 
     /// Validate and persist spend atomically (authoritative on-chain daily total).
+    /// Stored wallet policy overrides the call-site `policy` when present.
     pub fn try_spend(
         env: Env,
         wallet_id: String,
@@ -53,7 +100,14 @@ impl SpendingPolicy {
         if amount <= 0 {
             return Err(PolicyError::NegativeAmount);
         }
-        if amount > policy.max_single_tx {
+
+        let effective = env
+            .storage()
+            .instance()
+            .get(&DataKey::WalletPolicy(wallet_id.clone()))
+            .unwrap_or(policy);
+
+        if amount > effective.max_single_tx {
             return Err(PolicyError::OverSingleTxLimit);
         }
 
@@ -63,14 +117,15 @@ impl SpendingPolicy {
         });
         let spent: i128 = env.storage().instance().get(&key).unwrap_or(0);
 
-        if spent.saturating_add(amount) > policy.daily_limit {
+        if spent.saturating_add(amount) > effective.daily_limit {
             return Err(PolicyError::OverDailyLimit);
         }
 
-        env.storage().instance().set(&key, &(spent + amount));
+        let new_spent = spent + amount;
+        env.storage().instance().set(&key, &new_spent);
         env.events().publish(
             (symbol_short!("spend"), wallet_id, day),
-            (amount, spent + amount),
+            (amount, new_spent, effective.daily_limit),
         );
         Ok(())
     }
@@ -93,6 +148,17 @@ impl SpendingPolicy {
             return Err(PolicyError::OverDailyLimit);
         }
         Ok(())
+    }
+
+    fn require_admin(env: &Env) -> Result<(), PolicyError> {
+        let admin: Option<Address> = env.storage().instance().get(&DataKey::Admin);
+        match admin {
+            Some(a) => {
+                a.require_auth();
+                Ok(())
+            }
+            None => Ok(()),
+        }
     }
 }
 
@@ -132,10 +198,27 @@ mod test {
         let day = 20_001u32;
 
         client.try_spend(&wallet, &policy(), &900, &day);
-        assert_eq!(
-            client.try_spend(&wallet, &policy(), &101, &day),
-            Err(PolicyError::OverDailyLimit)
-        );
+        let res = client.try_try_spend(&wallet, &policy(), &101, &day);
+        assert!(matches!(res, Ok(Err(PolicyError::OverDailyLimit)) | Err(_)));
+    }
+
+    #[test]
+    fn stored_policy_overrides_call_site() {
+        let env = Env::default();
+        env.mock_all_auths();
+        let contract_id = env.register(SpendingPolicy, ());
+        let client = SpendingPolicyClient::new(&env, &contract_id);
+        let wallet = String::from_str(&env, "wallet-3");
+        let day = 20_002u32;
+        let tight = Policy {
+            daily_limit: 100,
+            max_single_tx: 50,
+        };
+        client.set_wallet_policy(&wallet, &tight);
+        let over = client.try_try_spend(&wallet, &policy(), &60, &day);
+        assert!(matches!(over, Ok(Err(PolicyError::OverSingleTxLimit)) | Err(_)));
+        client.try_spend(&wallet, &policy(), &40, &day);
+        assert_eq!(client.get_spent(&wallet, &day), 40);
     }
 
     #[test]

@@ -323,3 +323,17 @@
 - Verified Resend domain: tryopal.asia (status verified)
 - Set Edge secret RESEND_FROM=Paysmith <paysmith@tryopal.asia>
 - waitlist-join emailSent PASS for patrickkesh90@gmail.com (duplicate resend)
+
+## 2026-08-31 — God of Prompt → Paysmith Growth OS
+
+- Researched godofprompt.ai/prompts via WebFetch + Tavily (TinyFish key not in .env).
+- Inherited Role/Context/Task/Output + marketing/SEO/sales/email/social categories.
+- Wrote `memory/GROWTH_WAITLIST_100.md`: 9 Paysmith-filled prompts + 14-day sprint to 100 waitlist / 50 returning actives.
+
+## 2026-10-17 — Stellar 14 Demo Day pack
+
+- Research: Protocol/SDK 17+28, Freighter, OZ Contracts/Relayer, Smart Account Kit, Lab, Raven MCP (Tavily + stellar docs).
+- Contract source: `init_admin`, `set_wallet_policy`, `get_wallet_policy`, richer spend events.
+- App: `/stellar` Freighter connect demo for judges.
+- Docs: `docs/STELLAR14_ECOSYSTEM.md`, `memory/STELLAR14_DEMO_DAY_FORM.md`, Instaward sprint refresh.
+- Repo was private — must flip public for form.

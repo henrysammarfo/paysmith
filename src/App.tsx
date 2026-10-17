@@ -24,6 +24,7 @@ import Transactions from "./pages/dashboard/Transactions";
 import WebhookLogs from "./pages/dashboard/WebhookLogs";
 import AdminMetrics from "./pages/dashboard/AdminMetrics";
 import ApiUsage from "./pages/dashboard/ApiUsage";
+import StellarDemo from "./pages/StellarDemo";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/docs" element={<Docs />} />
             <Route path="/playground" element={<ApiPlayground />} />
+            <Route path="/stellar" element={<StellarDemo />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route
